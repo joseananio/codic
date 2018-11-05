@@ -18,7 +18,7 @@ yarn install codic
 ```
 ### Usage
 In your code, do the following:
-```
+```javascript
 import Codic from "codic";
 import RedisDriver from "codic-redis";// or any other driver, or your own driver
 
