@@ -1,0 +1,18 @@
+{
+  "parser": "babel-eslint",
+    "parserOptions": {
+    "sourceType": "module",
+    "allowImportExportEverywhere": false,
+    "codeFrame": false
+  },
+  "extends": "umi",
+  "plugins": [
+  ],
+  "rules": {
+  },
+  "settings": {
+    "flowtype": {
+      "onlyFilesWithFlowAnnotation": true
+    }
+  }
+}
