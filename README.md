@@ -28,7 +28,7 @@ var codic = new Codic(driver);
 
 // define your tasks
 const simpleLogTask = (activity) => {
-    console.log("Simply logging");
+    console.log("Simply saying "+activity.attrs.data.message);
 }
 // use an IIFE, for async database activities
 (async function(){
@@ -41,13 +41,13 @@ const simpleLogTask = (activity) => {
         await codic
             .run("log something")
             .every(3) //3 seconds
-            .use({message:"Hello"})
+            .use({ message:"Hello" }) //pass data to task
             .save();
 
         //start codic
         await codic.start();
     }
-});
+})();
 ```
 Thats it. You are live!!
 
