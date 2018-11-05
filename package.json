@@ -1,13 +1,27 @@
 {
-  "name": "sched",
+  "name": "codic",
+  "version": "1.0.0",
+  "description": "Easy, intuitive database agnostic scheduler for node, JavaScript",
   "author": {
-    "name": "joseananio",
+    "name": "Joseph Anane",
     "url": "http://github.com/joseananio"
   },
-  "version": "0.0.1",
+  "license": "MIT",
+  "homepage": "http://github.com/joseananio",
   "main": "dist/cjs/bundle.js",
   "module": "dist/es/bundle.js",
-  "license": "MIT",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE.md"
+  ],
+  "directories": {
+    "test": "tests",
+    "lib": "lib"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
   "scripts": {
     "clean": "rimraf dist",
     "start": "NODE_ENV=dev nodemon src/main.js --exec babel-node",
@@ -38,11 +52,28 @@
     "rollup-plugin-json": "^3.0.0",
     "rollup-plugin-node-resolve": "^3.4.0"
   },
+  "keywords": [
+    "job",
+    "task",
+    "scheduler",
+    "jobs",
+    "job",
+    "runner",
+    "cron"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/joseananio/codic"
+  },
+  "bugs": {
+    "url": "https://github.com/joseananio/codic/issues"
+  },
   "ava":{
     "files":[
 			"tests/**/*.js",
-			"!src/**/*.js",
-			"!src/",
+			"!lib/**/*.js",
+			"!lib/",
+			"!drivers/",
 			"!node_modules/**/*.js"
 		],
 		"sources":[
