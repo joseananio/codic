@@ -1,7 +1,7 @@
 import Tasks from "./tasks";
 import Activities from "./activities";
-import Activity from "../../lib/activity";
-import Task from "../../lib/task";
+import Activity from '../../lib/activity';
+import Task from '../../lib/task';
 
 
 //////////////

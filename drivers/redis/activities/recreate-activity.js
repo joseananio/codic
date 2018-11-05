@@ -1,4 +1,4 @@
-import Activity from "../../../src/lib/activity";
+import Activity from "../../../lib/activity";
 
 export default function recreateActivity(activity) {
   let { tasks, ...config } = activity;

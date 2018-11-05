@@ -1,6 +1,6 @@
 import test from "ava";
 import Redis from "../../drivers/redis";
-import Activity from "../../src/lib/activity";
+import Activity from '../../lib/activity';
 
 let redis = new Redis();
 let activity = new Activity("a job", { field: "value", driver: redis });

@@ -1,4 +1,4 @@
-import JSONfn from "../../../src/utils/to-from-json";
+import JSONfn from '../../utils/to-from-json';
 
 export default async function(activity) {
   var current = await this.getActivitiesRaw();

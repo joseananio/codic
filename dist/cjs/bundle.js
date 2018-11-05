@@ -643,7 +643,7 @@ function _assign() {
   return _assign.apply(this, arguments);
 }
 
-function pause(activityName) {
+function pause() {
   console.log(this.driver);
 }
 

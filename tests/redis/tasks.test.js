@@ -1,6 +1,6 @@
 import test from "ava";
 import Redis from "../../drivers/redis";
-import Task from "../../src/lib/task";
+import Task from '../../lib/task';
 
 let task = new Task("a job", { priority: 1 }, function() {
   console.log("Hello runner...");

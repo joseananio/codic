@@ -1,4 +1,4 @@
-import JSONfn from "../../../src/utils/to-from-json";
+import JSONfn from '../../utils/to-from-json';
 
 export default async function(task) {
   var _tasks = await this.getTasks();

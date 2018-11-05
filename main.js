@@ -1,4 +1,4 @@
-import Codic from "./src/lib/codic";
+import Codic from './lib/codic';
 import RedisDriver from "./drivers/redis";
 // import MemoryDriver from "./drivers/memory";
 

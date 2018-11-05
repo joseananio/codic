@@ -1,4 +1,4 @@
-import JSONfn from "../../../src/utils/to-from-json";
+import JSONfn from '../../utils/to-from-json';
 
 export async function getActivitiesRaw() {
   var res = await this.db.get(this.keyBase + ":activity");
