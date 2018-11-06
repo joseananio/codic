@@ -46,7 +46,9 @@ const simpleLogTask = (activity) => {
 
         //start codic
         await codic.start();
-    }
+    } catch (error) {
+    console.log(error);
+  }
 })();
 ```
 Thats it. You are live!!
