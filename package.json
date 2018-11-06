@@ -1,6 +1,6 @@
 {
   "name": "codic",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "Easy, intuitive database agnostic scheduler for node, JavaScript",
   "author": {
     "name": "Joseph Anane",
