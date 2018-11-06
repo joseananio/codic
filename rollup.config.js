@@ -30,8 +30,12 @@ export default args => {
         babel({
           // only transpile our source code
           exclude: "node_modules/**",
+          babelrc: false,
+          runtimeHelpers: true,
+          presets: [["@babel/env", { modules: false }]],
           // loading plugin here is better than in babelrc
           plugins: [
+            "@babel/transform-runtime",
             "@babel/external-helpers",
             "@babel/plugin-proposal-object-rest-spread"
           ],

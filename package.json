@@ -32,6 +32,8 @@
     "test": "ava"
   },
   "dependencies": {
+    "@babel/plugin-transform-runtime": "^7.1.0",
+    "@babel/runtime": "^7.1.2",
     "eslint": "^5.5.0",
     "human-interval": "^0.1.6",
     "ioredis": "^4.0.0"
@@ -68,25 +70,25 @@
   "bugs": {
     "url": "https://github.com/joseananio/codic/issues"
   },
-  "ava":{
-    "files":[
-			"tests/**/*.js",
-			"!lib/**/*.js",
-			"!lib/",
-			"!drivers/",
-			"!node_modules/**/*.js"
-		],
-		"sources":[
-			"**/*.{js,jsx,ts}",
-			"!dist/**/*"
+  "ava": {
+    "files": [
+      "tests/**/*.js",
+      "!lib/**/*.js",
+      "!lib/",
+      "!drivers/",
+      "!node_modules/**/*.js"
     ],
-    "require":[
+    "sources": [
+      "**/*.{js,jsx,ts}",
+      "!dist/**/*"
+    ],
+    "require": [
       "@babel/register",
       "@babel/polyfill"
     ],
-    "cache":false,
-		"failFast":false,
-		"verbose":true,
-		"tap":true
+    "cache": false,
+    "failFast": false,
+    "verbose": true,
+    "tap": true
   }
 }
