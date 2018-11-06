@@ -13,7 +13,7 @@ const external = [];
 export default args => {
   var cf = [
     {
-      input: "./main.js",
+      input: "./lib/codic/index.js",
       output: {
         file: {
           cjs: pkg.main,
