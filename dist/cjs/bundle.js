@@ -1020,16 +1020,80 @@ var aType = {
   TEMP: "temp"
 };
 
+var humanInterval_1 = createCommonjsModule(function (module) {
+var humanInterval = module.exports = function humanInterval (time) {
+  if (!time) return time
+  if (typeof time === 'number') return time
+  time = swapLanguageToDecimals(time);
+  time = time.replace(/(second|minute|hour|day|week|month|year)s?(?! ?(s )?and |s?$)/, '$1,');
+  return time.split(/and|,/).reduce(function (sum, group) {
+    return sum + (group !== '' ? processUnits(group) : 0)
+  }, 0)
+};
+
+humanInterval.languageMap = {
+  'one': 1,
+  'two': 2,
+  'three': 3,
+  'four': 4,
+  'five': 5,
+  'six': 6,
+  'seven': 7,
+  'eight': 8,
+  'nine': 9,
+  'ten': 10
+};
+
+function swapLanguageToDecimals (time) {
+  var language = humanInterval.languageMap;
+  var languageMapRegex = new RegExp('(' + Object.keys(language).join('|') + ')', 'g');
+  var matches = time.match(languageMapRegex);
+  if (!matches) return time
+
+  matches.forEach(function (match) {
+    var matchStr = language[match] > 1 ? language[match] : language[match].toString().slice(1);
+    time = time.replace(match, matchStr);
+  });
+  return time
+}
+
+function processUnits (time) {
+  var unit;
+  var num = parseFloat(time, 10);
+  if (time.match(/(second|minute|hour|day|week|month|year)s?/) !== null) unit = time.match(/(second|minute|hour|day|week|month|year)s?/)[1];
+  else unit = undefined;
+  if (!num) num = 1;
+
+  switch (unit) {
+    case 'second': unit = 1000;
+      break
+    case 'minute': unit = 1000 * 60;
+      break
+    case 'hour': unit = 1000 * 60 * 60;
+      break
+    case 'day': unit = 1000 * 60 * 60 * 24;
+      break
+    case 'week': unit = 1000 * 60 * 60 * 24 * 7;
+      break
+    case 'month': unit = 1000 * 60 * 60 * 24 * 30;
+      break
+    case 'year': unit = 1000 * 60 * 60 * 24 * 365;
+      break
+  }
+  return unit * num
+}
+});
+
 /**
  * Setup repeatition for task
- * @param {String} timesheet time to repeat
+ * @param {String} timesheet time to repeat in miliseconds or human-readable
  * @param  {...any} rest fn arguments
  */
 
 function every(timesheet) {
   this.type = aType.REPEAT;
-  this.timesheet = timesheet;
-  this.nextRun = Date.now() + timesheet * 1000;
+  this.timesheet = generateTime(timesheet);
+  if (!this.nextRun) this.nextRun = Date.now() + this.timesheet;
 
   for (var _len = arguments.length, rest = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
     rest[_key - 1] = arguments[_key];
@@ -1037,6 +1101,11 @@ function every(timesheet) {
 
   return rest.length > 0 ? this.use.apply(this, rest) : this;
 }
+
+var generateTime = function generateTime(timesheet) {
+  if (/^[0-9]+$/.test(timesheet)) return timesheet;
+  return humanInterval_1(timesheet);
+};
 
 function at(timesheet) {
   this.type = aType.ONCE;
@@ -1117,6 +1186,7 @@ function use(data) {
 function copyConfig(to, from) {
   if (from.driver) to.driver = from.driver;
   to.id = from.id;
+  to._name = from._name;
   Object.keys(from).forEach(function (key) {
     if (to[key] !== undefined) to[key] = from[key];
   });
@@ -1130,7 +1200,8 @@ function Activity(tasks, config) {
   this.failedAt = null;
   this.failReason = null;
   this.type = aType.TEMP;
-  this.timesheet = "";
+  this.timesheet = 1000;
+  this._name = "";
   this.driver = null;
   this.attrs = {
     skipInitial: true
@@ -1209,32 +1280,20 @@ function _ref$1() {
   return _ref$1.apply(this, arguments);
 }
 
-Activity.prototype = {
-  at: at,
-  use: use,
-  save: save,
-  every: every,
-  isDue: isDue,
-  remove: remove,
-  enable: disable$1,
-  disable: disable,
-  isActive: isActive,
-  getTasks: getTasks,
-  createTasks: createTasks
-};
+function updateNextRun(_x) {
+  return _updateNextRun.apply(this, arguments);
+}
 
-Activity.prototype.updateNextRun =
-/*#__PURE__*/
-function () {
-  var _ref = _asyncToGenerator(
+function _updateNextRun() {
+  _updateNextRun = _asyncToGenerator(
   /*#__PURE__*/
   regenerator.mark(function _callee(from) {
     return regenerator.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            this.nextRun = from + this.timesheet * 1000;
-            this.lastrun = from;
+            this.nextRun = from + this.timesheet;
+            this.lastRun = from;
             _context.next = 4;
             return this.save();
 
@@ -1248,11 +1307,43 @@ function () {
       }
     }, _callee, this);
   }));
+  return _updateNextRun.apply(this, arguments);
+}
 
-  return function (_x) {
-    return _ref.apply(this, arguments);
-  };
-}();
+/**
+ *
+ * @param {string} name name of activity
+ */
+function name(name) {
+  this._name = name;
+  return this;
+}
+
+/**
+ * specify when to start activity
+ * @param {string|int} dateTime datetime string or millsec int
+ */
+function startAt(dateTime) {
+  this.nextRun = new Date(dateTime).valueOf();
+  return this;
+}
+
+var proto = Activity.prototype;
+proto.at = at;
+proto.use = use;
+proto.name = name;
+proto.save = save;
+proto.every = every;
+proto.isDue = isDue;
+proto.remove = remove;
+proto.enable = disable$1;
+proto.disable = disable;
+proto.startAt = startAt;
+proto.isActive = isActive;
+proto.getTasks = getTasks;
+proto.createTasks = createTasks;
+proto.updateNextRun = updateNextRun;
+Activity.prototype = proto;
 
 Activity.prototype.makeId = function () {
   if (!this.id) this.id = Math.random().toString(36).slice(2);
@@ -1285,23 +1376,22 @@ function Task(name, config, definition) {
   this.definition = definition;
 }
 
-function assign(_x) {
+function assign(_x, _x2) {
   return _assign.apply(this, arguments);
 }
 
 function _assign() {
   _assign = _asyncToGenerator(
   /*#__PURE__*/
-  regenerator.mark(function _callee(name) {
+  regenerator.mark(function _callee(name, def) {
     var config,
-        def,
         task,
         _args = arguments;
     return regenerator.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            config = {};
+            config = _args.length > 2 && _args[2] !== undefined ? _args[2] : {};
 
             if (!(_args.length < 2)) {
               _context.next = 3;
@@ -1311,43 +1401,38 @@ function _assign() {
             throw "Assign requires at least two arguments; Name and task definition";
 
           case 3:
-            if (_args.length === 2) def = _args[1];else if (_args.length === 3) {
-              config = _args[1];
-              def = _args[2];
-            }
-
             if (!(typeof name !== "string")) {
-              _context.next = 6;
+              _context.next = 5;
               break;
             }
 
             throw "Invalid Task name. Requires a string";
 
-          case 6:
-            if (!(typeof def !== "function")) {
-              _context.next = 8;
+          case 5:
+            if (!(typeof def !== "function" && typeof def !== "string")) {
+              _context.next = 7;
               break;
             }
 
-            throw "Invalid Job definition. Requires a function";
+            throw "Invalid Job definition. Requires a function or full path to function";
 
-          case 8:
+          case 7:
             if (!(_typeof(config) !== "object")) {
-              _context.next = 10;
+              _context.next = 9;
               break;
             }
 
             throw "Invalid config parameter. Requires an object";
 
-          case 10:
+          case 9:
             task = new Task(name, config, def);
-            _context.next = 13;
+            _context.next = 12;
             return this.driver.saveTask(task);
 
-          case 13:
+          case 12:
             return _context.abrupt("return", _context.sent);
 
-          case 14:
+          case 13:
           case "end":
             return _context.stop();
         }
@@ -1488,24 +1573,48 @@ function _r() {
               var _ref3 = _asyncToGenerator(
               /*#__PURE__*/
               regenerator.mark(function _callee3(task) {
-                var activity;
+                var activity, fn;
                 return regenerator.wrap(function _callee3$(_context3) {
                   while (1) {
                     switch (_context3.prev = _context3.next) {
                       case 0:
                         activity = task.activity;
-                        _context3.next = 3;
-                        return task.definition(activity, function () {});
 
-                      case 3:
+                        if (!(typeof task.definition === "string")) {
+                          _context3.next = 14;
+                          break;
+                        }
+
+                        _context3.prev = 2;
+                        fn = require(task.definition);
+                        _context3.next = 6;
+                        return fn(activity);
+
+                      case 6:
                         return _context3.abrupt("return", _context3.sent);
 
-                      case 4:
+                      case 9:
+                        _context3.prev = 9;
+                        _context3.t0 = _context3["catch"](2);
+                        console.log(_context3.t0);
+
+                      case 12:
+                        _context3.next = 17;
+                        break;
+
+                      case 14:
+                        _context3.next = 16;
+                        return task.definition(activity);
+
+                      case 16:
+                        return _context3.abrupt("return", _context3.sent);
+
+                      case 17:
                       case "end":
                         return _context3.stop();
                     }
                   }
-                }, _callee3, this);
+                }, _callee3, this, [[2, 9]]);
               }));
 
               return function (_x6) {
@@ -1531,13 +1640,15 @@ function _r() {
   return _r.apply(this, arguments);
 }
 
-Codic.prototype = {
-  pause: pause,
-  start: start,
-  run: run,
-  assign: assign,
-  runThrough: runThrough
-};
+// resume
+
+var proto$1 = Codic.prototype;
+proto$1.run = run;
+proto$1.pause = pause;
+proto$1.start = start;
+proto$1.assign = assign;
+proto$1.runThrough = runThrough;
+Codic.prototype = proto$1;
 Codic.Task = Task;
 Codic.Activity = Activity;
 

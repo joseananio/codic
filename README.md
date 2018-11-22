@@ -9,12 +9,20 @@ Currently, we support redis and in-memory storage of schedules. Contributions ar
 
 ### Installation
 ---
+We are still in beta mode so beta versions should be preferred where available
 ```
-npm install --save codic
+npm install --save codic@beta
 ```
 or
 ```
-yarn install codic
+yarn add codic@beta
+```
+
+Install a driver library of your choice.
+Currently [codic-redis](http://github.com/joseananio/codic-redis) is available. Anyone can write a driver and let us know to link it here.
+
+```
+yarn add codic-redis
 ```
 ### Usage
 In your code, do the following:
@@ -35,13 +43,15 @@ const simpleLogTask = (activity) => {
 
     try {
         // register task on Codic
-        await codic.assign("log something",{},simpleLogTask);
+        await codic.assign("say hello",simpleLogTask);
 
         //create the activities that run the tasks
         await codic
-            .run("log something")
-            .every(3) //3 seconds
-            .use({ message:"Hello" }) //pass data to task
+            .run("say hello")
+            .every("3 seconds") // or simply 3
+            .use({ message:"Hello" }) //pass data to the task(s)
+            .from("2018-12-12") // when to start from (optional)
+            .name("some_activity_name") //optional
             .save();
 
         //start codic
@@ -52,6 +62,7 @@ const simpleLogTask = (activity) => {
 })();
 ```
 Thats it. You are live!!
+You can create many activities that run the same ```say hello``` task(function)
 
 ### Concept
 ----
