@@ -5,7 +5,7 @@ import { TaskModel } from "../../codic/task/constructor";
  * @param {string} name name of task
  * @returns Promise<TaskModel>
  */
-export default async function get(name: string): Promise<TaskModel> {
+export async function get(name: string): Promise<TaskModel> {
   return await this.list.find(task => task.name === name);
 }
 

@@ -1,15 +1,3 @@
-export declare namespace Codic {
-  // codic task
-  export interface ITask {
-    name: string;
-    id?: string | number;
-    config: TaskConfig;
-    _definition?: string | TaskDefinition;
-  }
-  export let TaskModel: TaskModel;
-  export let TaskConfig: TaskConfig;
-}
-
 /////////////////////////////////////////////
 export interface TaskConfig {
   priority?: number;
@@ -38,7 +26,13 @@ function copyConfig(to: TaskConfig, from: TaskConfig = {}): TaskConfig {
   return to;
 }
 
-export abstract class ATask {
+export interface IATask {
+  name: string;
+  id?: string | number;
+  config: TaskConfig;
+  _definition?: string | TaskDefinition;
+}
+export abstract class ATask implements IATask {
   public id: string | number;
   public config: TaskConfig = defaultConfig;
   _definition: string | TaskDefinition;
@@ -47,12 +41,6 @@ export abstract class ATask {
   ////////////////
   //constructor
   ////////////////
-
-  /**
-   * Create a local task instance using a task model object.
-   * @param TModel Task Model
-   */
-  constructor(TModel: TaskModel);
 
   /**
    * Create a local task instance.
@@ -65,6 +53,11 @@ export abstract class ATask {
     _definition: string | TaskDefinition,
     config?: TaskConfig
   );
+  /**
+   * Create a local task instance using a task model object.
+   * @param TModel Task Model
+   */
+  constructor(TModel: TaskModel);
   /**
    * Create a local task instance.
    * @param name_Or_TModel name of the new task

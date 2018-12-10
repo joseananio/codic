@@ -5,7 +5,7 @@ import { ActivityModel } from "../../codic/activity/constructor";
  * @param {string} name name of activity
  * @returns Promise<ActivityModel>
  */
-export default async function get(name: string): Promise<ActivityModel> {
+export async function get(name: string): Promise<ActivityModel> {
   return await this.list.find(activity => activity._name === name);
 }
 

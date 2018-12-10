@@ -92,9 +92,17 @@ export abstract class AActivity implements IActivity {
   tasks?: Array<TaskModel> = new Array();
 
   /**
-   *
+   * Create a new codic activity instance.
+   * @param model ActivityModel object
+   * @param config ActivityConfig object
    */
   constructor(model: ActivityModel, config: IActivityConfig);
+
+  /**
+   * Create a new codic activity instance.
+   * @param taskNames names of tasks for activity
+   * @param config ActivityConfig object
+   */
   constructor(taskNames: string | Array<string>, config: IActivityConfig);
 
   /**

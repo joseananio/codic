@@ -4,7 +4,7 @@ import { ActivityModel } from "../../codic/activity/constructor";
  * @param {string} name name of activity
  * @returns Promise<ActivityModel>
  */
-export default function get(name: string): Promise<ActivityModel>;
+export declare function get(name: string): Promise<ActivityModel>;
 /**
  * Get a single activity by id
  * The activity should have been saved in the driver first

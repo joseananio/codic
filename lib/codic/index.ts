@@ -3,8 +3,11 @@ import Activity from "./activity/index";
 import Task from "./task/index";
 import { TaskModel, TaskDefinition, TaskConfig } from "./task/constructor";
 
-// removeActivity
-// resume
+import start from "./start";
+import run from "./run";
+import assign from "./assign";
+import pause from "./pause"; //pause
+import runThrough from "./run-through";
 
 interface ICodic extends IACodic {
   run(jobs: string | Array<string>, ...rest: any): Promise<Activity>;
@@ -19,33 +22,60 @@ interface ICodic extends IACodic {
 
   pause(): Promise<Codic>;
 
-  _runThrough(cb?: Function): Promise<void>;
+  // _runThrough(cb?: Function): Promise<void>;
 }
 
 class Codic extends ACodic implements ICodic {
-  run(jobs: string | Array<string>, ...rest: any): Promise<Activity> {
-    return require("./run").default.apply(this, arguments);
+  /**
+   * Create a new activity. Activity requires a list of tasks,
+   * time schedule and optional input data
+   * @param tasks list of tasks (jobs) to run
+   * @param rest other parameter
+   */
+  run(tasks: string | Array<string>, ...rest: any): Promise<Activity> {
+    return run.apply(this, arguments);
   }
 
+  /**
+   * Create a new task that will be executed by activities
+   * @param name task name
+   * @param definition task definition. The whole function or path to the defined task function
+   * @param config optional configurations for task
+   */
   assign(
     name: string | TaskModel,
-    def: string | TaskDefinition,
+    definition: string | TaskDefinition,
     config?: TaskConfig
   ): Promise<Task> {
-    return require("./assign").default.apply(this, arguments);
+    return assign.apply(this, arguments);
   }
+
+  /**
+   * Start codic
+   */
   start(): Promise<void> {
-    return require("./start").default.apply(this);
+    return start.apply(this);
   }
 
+  /**
+   * Pause codic
+   * @param activityName optional. pause a specific activity only
+   */
   pause(activityName?: string): Promise<Codic> {
-    return require("./run").default.apply(this, arguments);
+    return pause.apply(this, arguments);
   }
 
-  _runThrough(cb: Function): Promise<void> {
-    return require("./run-through").default.apply(this, arguments);
+  /**
+   * private method
+   * @param cb callback function
+   */
+  private _runThrough(cb: Function): Promise<void> {
+    return runThrough.apply(this, arguments);
   }
 
+  /**
+   * Private method
+   */
   private _tryRun() {
     let that = this;
     this._runThrough(function(err, nextRun) {
@@ -56,3 +86,5 @@ class Codic extends ACodic implements ICodic {
   }
 }
 export default Codic;
+export { default as Task } from "./task/index";
+export { default as Activity } from "./activity/index";

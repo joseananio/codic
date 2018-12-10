@@ -1,20 +1,20 @@
 import { AActivity, IActivity, ActivityModel } from "./constructor";
 import { TaskModel } from "../task/constructor";
 interface IAActivity extends IActivity {
-    at(timesheet: number | string): Activity;
-    use(data: object): Activity;
     every(timesheet: number | string, ...rest: any): Activity;
-    save(): Promise<Activity>;
-    remove(): Promise<boolean>;
-    enable(): Promise<Activity>;
-    disable(): Promise<Activity>;
     startAt(dateTime: Date | string | number): Activity;
+    updateNextRun(from: number): Promise<any>;
+    at(timesheet: number | string): Activity;
     startIn?(dateTime: string): Activity;
+    setName(name: string): Activity;
+    disable(): Promise<Activity>;
+    enable(): Promise<Activity>;
+    use(data: object): Activity;
+    remove(): Promise<boolean>;
+    save(): Promise<Activity>;
+    getTasks(): Promise<any>;
     isActive(): boolean;
     isDue(): boolean;
-    getTasks(): Promise<any>;
-    updateNextRun(from: number): Promise<any>;
-    setName(name: string): Activity;
 }
 declare class Activity extends AActivity implements IAActivity {
     /**

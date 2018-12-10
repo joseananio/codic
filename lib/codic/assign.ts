@@ -16,7 +16,7 @@ export default async function assign(
   if (typeof def !== "function" && typeof def !== "string") {
     throw "Invalid Job definition. Requires a function or full path to function";
   }
-  if (typeof config !== "object") {
+  if (config && typeof config !== "object") {
     throw "Invalid config parameter. Requires an object";
   }
 

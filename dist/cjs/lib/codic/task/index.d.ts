@@ -1,14 +1,8 @@
-import { ATask, TaskModel, TaskDefinition, TaskConfig } from "./constructor";
-export declare namespace Codic {
-    interface ITask {
-        name: string;
-        id?: string | number;
-        config: TaskConfig;
-        _definition?: string | TaskDefinition;
-        toObject(): TaskModel;
-    }
+import { ATask, TaskModel, IATask } from "./constructor";
+export interface ITask extends IATask {
+    toObject(): TaskModel;
 }
-declare class Task extends ATask implements Codic.ITask {
+declare class Task extends ATask implements ITask {
     /**
      * Returns task formated as a driver object
      * @returns TaskModel

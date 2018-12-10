@@ -1,21 +1,38 @@
 import { AActivity, IActivity, ActivityModel } from "./constructor";
 import { TaskModel } from "../task/constructor";
 
+import updateNextRun from "./update-next-run";
+import { startAt, startIn } from "./start-at";
+import getTasks from "./get-tasks";
+import isActive from "./is-active";
+import failWtih from "./fail-with";
+import toObject from "./to-model";
+import addTask from "./add-task";
+import disable from "./disable";
+import enable from "./enable";
+import remove from "./remove";
+import isDue from "./is-due";
+import setName from "./name";
+import every from "./every";
+import save from "./save";
+import use from "./use";
+import at from "./at";
+
 interface IAActivity extends IActivity {
-  at(timesheet: number | string): Activity;
-  use(data: object): Activity;
   every(timesheet: number | string, ...rest: any): Activity;
-  save(): Promise<Activity>;
-  remove(): Promise<boolean>;
-  enable(): Promise<Activity>;
-  disable(): Promise<Activity>;
   startAt(dateTime: Date | string | number): Activity;
+  updateNextRun(from: number): Promise<any>;
+  at(timesheet: number | string): Activity;
   startIn?(dateTime: string): Activity;
+  setName(name: string): Activity;
+  disable(): Promise<Activity>;
+  enable(): Promise<Activity>;
+  use(data: object): Activity;
+  remove(): Promise<boolean>;
+  save(): Promise<Activity>;
+  getTasks(): Promise<any>;
   isActive(): boolean;
   isDue(): boolean;
-  getTasks(): Promise<any>;
-  updateNextRun(from: number): Promise<any>;
-  setName(name: string): Activity;
   // makeId(): Activity;
 }
 
@@ -25,7 +42,7 @@ class Activity extends AActivity implements IAActivity {
    * @param timesheet specify the time to run activity. Human interval, date string or time number accepted
    */
   at(timesheet: number | string): Activity {
-    return require("./at").default.apply(this, arguments);
+    return at.apply(this, arguments);
   }
 
   /**
@@ -33,7 +50,7 @@ class Activity extends AActivity implements IAActivity {
    * @param data data object to pass to activity
    */
   use(data: object): Activity {
-    return require("./use").default.apply(this, arguments);
+    return use.apply(this, arguments);
   }
 
   /**
@@ -42,60 +59,59 @@ class Activity extends AActivity implements IAActivity {
    * @param rest others
    */
   every(timesheet: number | string, ...rest: any): Activity {
-    return require("./every").default.apply(this, arguments);
+    return every.apply(this, arguments);
   }
 
   save(): Promise<Activity> {
-    return require("./save").default.apply(this);
+    return save.apply(this);
   }
 
   remove(): Promise<boolean> {
-    return require("./remove").default.apply(this);
+    return remove.apply(this);
   }
 
   enable(): Promise<Activity> {
-    return require("./enable").default.apply(this);
+    return enable.apply(this);
   }
 
   disable(): Promise<Activity> {
-    return require("./disable").default.apply(this);
+    return disable.apply(this);
   }
 
   setName(name: string): Activity {
-    return require("./name").default.apply(this, arguments);
+    return setName.apply(this, arguments);
   }
 
   startAt(dateTime: Date | string | number): Activity {
-    return require("./start-at").default.apply(this, arguments);
+    return startAt.apply(this, arguments);
   }
 
   startIn(dateTime: string): Activity {
-    return require("./start-at").startIn.apply(this, arguments);
+    return startIn.apply(this, arguments);
   }
 
   isActive(): boolean {
-    return require("./is-active").default.apply(this);
+    return isActive.apply(this);
   }
 
   isDue(): boolean {
-    return require("./is-due").default.apply(this);
+    return isDue.apply(this);
   }
 
   getTasks(): Promise<any> {
-    return require("./get-tasks").default.apply(this);
+    return getTasks.apply(this);
   }
 
   updateNextRun(from?: number): Promise<any> {
-    return require("./update-next-run").default.apply(this, arguments);
+    return updateNextRun.apply(this, arguments);
   }
 
   addTask(task: TaskModel): Activity {
-    return require("./add-task").default.apply(this, arguments);
+    return addTask.apply(this, arguments);
   }
 
   failWtih(message: string, time?: number): Activity {
-    console.log("failed");
-    return require("./fail-with").default.apply(this, arguments);
+    return failWtih.apply(this, arguments);
   }
 
   /**
@@ -103,7 +119,7 @@ class Activity extends AActivity implements IAActivity {
    * @returns TaskModel
    */
   toObject(): ActivityModel {
-    return require("./to-model").default.apply(this);
+    return toObject.apply(this);
   }
 
   /**

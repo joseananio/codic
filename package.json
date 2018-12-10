@@ -15,7 +15,7 @@
     "README.md",
     "LICENSE.md"
   ],
-  "types": "dist/index.d.ts",
+  "types": "dist/cjs/lib/codic/index.d.ts",
   "directories": {
     "test": "test",
     "lib": "lib"

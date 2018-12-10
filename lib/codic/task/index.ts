@@ -1,22 +1,18 @@
-import { ATask, TaskModel, TaskDefinition, TaskConfig } from "./constructor";
+import { ATask, TaskModel, IATask } from "./constructor";
 
-export namespace Codic {
-  export interface ITask {
-    name: string;
-    id?: string | number;
-    config: TaskConfig;
-    _definition?: string | TaskDefinition;
-    toObject(): TaskModel;
-  }
+import toObject from "./to-model";
+
+export interface ITask extends IATask {
+  toObject(): TaskModel;
 }
 
-class Task extends ATask implements Codic.ITask {
+class Task extends ATask implements ITask {
   /**
    * Returns task formated as a driver object
    * @returns TaskModel
    */
   toObject(): TaskModel {
-    return require("./to-model").default.apply(this);
+    return toObject.apply(this);
   }
 }
 

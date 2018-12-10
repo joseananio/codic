@@ -137,7 +137,7 @@ Register your task with codic, in your program:
 ```javascript
 const path = require("path");
 //define full path to task file
-let taskPath = path.join(path.cwd(),"./tasks/dynamic-task.js");
+let taskPath = path.join(process.cwd(),"./tasks/dynamic-task.js");
 //register
 await codic.define("dynamic-task",taskPath);
 
