@@ -16,11 +16,11 @@ We have rewritten codic to make it easy for anyone to use and build upon. Fully 
 ---
 We are still in beta mode so beta versions should be preferred where available
 ```
-npm install --save codic@beta
+npm install --save codic
 ```
 or
 ```
-yarn add codic@beta
+yarn add codic
 ```
 
 
