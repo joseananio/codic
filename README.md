@@ -9,7 +9,7 @@ Currently, we support redis and in-memory storage of schedules. Contributions ar
 ### Codic 2.0 is here
 ---
 
-We have rewritten codic to make it easy for anyone to use and build upon. Fully **Typescript**, **in-built memory driver**, and even more **tests** with **mocha** [Read more](#codic-2.0)
+We have rewritten codic to make it easy for anyone to use and build upon. Fully **Typescript**, **in-built memory driver**, and even more **tests** with **mocha** [Read more](#codic-20)
 
 
 ### Installation
