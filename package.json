@@ -1,6 +1,6 @@
 {
   "name": "codic",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Easy dynamic nodejs, javascript job scheduler for any database",
   "author": {
     "name": "Joseph Anane",
