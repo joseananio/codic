@@ -1,7 +1,7 @@
 {
   "name": "codic",
   "version": "2.0.3",
-  "description": "Easy dynamic nodejs, javascript job scheduler for any database",
+  "description": "Easy dynamic nodejs, typescript job scheduler for any database",
   "author": {
     "name": "Joseph Anane",
     "url": "http://github.com/joseananio"
@@ -63,7 +63,10 @@
     "runner",
     "cron",
     "typescript",
-    "js"
+    "js",
+    "typescript-scheduler",
+    "dynamic",
+    "multi-database-scheduler"
   ],
   "repository": {
     "type": "git",

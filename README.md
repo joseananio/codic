@@ -217,17 +217,18 @@ interface TaskModel {
 }
 
 interface IATasks {
-  list: Array<TaskModel>;
+  list?: Array<TaskModel>;
 }
 interface ITasks extends IATasks {
-  all(): Promise<TaskModel>;
-  get(name: string): Promise<TaskModel>;
   getById?(id: string | number): Promise<TaskModel>;
   save(activity: TaskModel): Promise<TaskModel>;
+  get(name: string): Promise<TaskModel>;
+  all(): Promise<Array<TaskModel>>;
   clear(): number;
 }
 ```
-The TaskModel interface can be found in ```lib/codic/task/constructor```.
+The TaskModel, TaskDefinition, TaskConfig interface can be found in ```lib/codic/task/constructor.ts```.
+ITasks and IATasks interfaces can be found in ```lib/memory/tasks/constructor.ts```.
 
 
 #### Activities interface
@@ -250,21 +251,23 @@ interface ActivityModel {
 }
 
 interface IAActivities {
-  list: Array<ActivityModel>;
+  list?: Array<ActivityModel>;
 }
 
 interface IActivities extends IAActivities {
-  all(): Promise<ActivityModel>;
-  get(name: string): Promise<ActivityModel>;
   getById?(id: string | number): Promise<ActivityModel>;
   save(activity: ActivityModel): Promise<ActivityModel>;
-  getActive(): Promise<Array<ActivityModel>>;
-  clear(): Promise<number>;
   getDueList(): Promise<Array<ActivityModel>>;
+  getActive(): Promise<Array<ActivityModel>>;
+  get(name: string): Promise<ActivityModel>;
+  all(): Promise<Array<ActivityModel>>;
   getNextRunDelay(): Promise<number>;
+  clear(): Promise<number>;
 }
 ```
-The TaskModel interface can be found in ```lib/codic/activity/constructor```.
+The ActivityModel, IActivityAttr, interface can be found in ```lib/codic/activity/constructor```.
+IActivities and IAActivities can be found in ```lib/memory/activities/constructor```.
+ActivityType and ActivityStatus can be found in ```lib/codic/activity/enums```.
 <br>
 <br>
 #### Note:

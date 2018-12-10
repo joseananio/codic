@@ -1,11 +1,11 @@
 import { TaskModel } from "../../codic/task/constructor";
 
-export function Tasks(): void {
-  this.list = new Array();
-}
-
 export interface IATasks {
-  list: Array<TaskModel>;
+  /**
+   * Storage object for in-memory storage. Other drivers may not need this
+   * @property lists
+   */
+  list?: Array<TaskModel>;
 }
 
 export abstract class ATasks implements IATasks {
