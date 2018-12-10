@@ -6,15 +6,22 @@ Anyone can write a driver for any database or storage mechanism to work with Cod
 
 Currently, we support redis and in-memory storage of schedules. Contributions are welcome. We will soon publish more details on how to contribute. Now, you can just contact me.
 
-### Codic 2.0 is here
+#### Codic v2 is here
 ---
 
-We have rewritten codic to make it easy for anyone to use and build upon. Fully **Typescript**, **in-built memory driver**, and even more **tests** with **mocha** [Read more](#codic-20)
+We have rewritten codic to make it easy for anyone to use and build upon. Fully **Typescript**, **in-built memory driver**, and even more **tests** with **mocha** [Read more](#6-codic-v2)
 
+[1. Installation](#1-installation)  
+[2. Usage](#2-usage)  
+[3. Concept](#3-concept)  
+[4. More Examples](#4-more-examples)  
+[5. Dynamic Tasks](#5-dynamic-tasks)  
+[6. Codic v2](#6-codic-v2)  
+[7. Creating Drivers](#7-creating-drivers)
 
-### Installation
+### 1. Installation
 ---
-We are still in beta mode so beta versions should be preferred where available
+We are still in beta mode so remember to check beta versions where available
 ```
 npm install --save codic
 ```
@@ -24,21 +31,19 @@ yarn add codic
 ```
 
 
-### Usage
+### 2. Usage
 In your code, do the following:
 ```javascript
 import Codic from "codic";
-import RedisDriver from "codic-redis";// or any other driver, or your own driver
 
-//instatiate driver and codic
-var driver = new RedisDriver();
-var codic = new Codic(driver);
+//instatiate codic
+var codic = new Codic();
 
 // define your tasks
 const simpleLogTask = (activity) => {
     console.log("Simply saying "+activity.attrs.data.message);
 }
-// use an IIFE, for async database activities
+// wrap in an IIFE, for async operation
 (async function(){
 
     try {
@@ -67,7 +72,7 @@ You can create many activities that run the same ```say hello``` task(function)
 #### usage with external driver
 Install a driver library of your choice.
 Currently [codic-redis](http://github.com/joseananio/codic-redis) is available. Anyone can write a driver and let us know to link it here.
-use codic version 1.0.2 for codic-redis. It is yet to be updated to codic 2.0
+use codic version ```1.0.2``` for codic-redis. It is yet to be updated to codic v2
 
 ```
 yarn add codic-redis
@@ -86,19 +91,21 @@ var codic = new Codic(driver);
 // ... continue as above
 ```
 
-### Concept
+### 3. Concept
 ----
 Codic works on two main pillars:
 1. Activity
 2. Task
 #### Activities
-Activities as the name suggests, are the things you want to do at a particular time.
+Activities as the name suggests, are the things you want to do at a particular time. Activities can be executed repeatedly or once.  
 #### Tasks 
-An activity can contain a number of tasks that will be completed.
+An activity can contain a number of tasks that will be performed. Tasks will be ranked in terms of priority  
 
 So when a scheduled activity is executed, it will run one or more tasks before it ends. This is a bit different from existing schedulers that only let you create jobs and pass in functions.
+<br>
+<br>
 
-### More examples
+### 4. More examples
 ---
 #### Running a one time task
 ```javascript
@@ -117,7 +124,23 @@ await codic.setName("someName").save();
 
 ```
 
-### Dynamic tasks
+#### Running with a delay
+```javascript
+await codic.run(["taskname"])
+           .every("30 minutes")
+           .startIn("5 minutes")
+           .save();
+
+```
+
+#### Simplified activity creation
+You can pass the task list, repeat time and data to the run method
+```javascript
+await codic.run(["task1","task2"],"30 minutes",{name:"somedata"}).save();
+
+```
+
+### 5. Dynamic tasks
 Dynamic tasks can be created and executed at any point in your execution cycle. You will then be able to pass different data to the task at any point of creation.
 
 To use dynamic tasks, define each task in a separate file and export it as default:
@@ -145,9 +168,11 @@ await codic.define("dynamic-task",taskPath);
 
 Now you can use the task in your activities. The task content can be modified in the ``dynamic-task.js`` file and codic will always read the latest changes.
 You can also create several activities that use the same task, during runtime.
+<br>
+<br>
 
 
-### Codic 2.0
+### 6. Codic v2
 ---
 #### 1. Now with native support for Typescript. 
 We have rewritten the entire codic base in typescript. Now you can implement the driver interface and create your own storate driver without knowing the internals of codic. 
@@ -159,3 +184,94 @@ For production use, do opt for an external persistent storage driver.
 
 #### 3. More test coverage
 Codic now comes with mocha and chai testing setup. We have included more unit tests to ensure everyting works as expected.
+<br>
+<br>
+
+### 7. Creating drivers
+---
+Creating a codic storage driver is easy. Just implement the methods and properties on the driver interface and you are done.
+
+#### Driver structure
+The driver is just a plain object with two properties. Your driver instance should export an object as shown below.
+
+```javascript
+driver = {
+    tasks:{
+        //methods for handling tasks
+    },
+    activities:{
+        // methods for handling activities
+    }
+}
+```
+
+#### Tasks interface
+The tasks object implements the ITasks interface which is as shown below. Your tasks object should export all the methods and return the data as specified. The implementation below is taken from the in-built memory driver which implements the same methods.
+
+```typescript
+interface TaskModel {
+  name: string;
+  id?: string | number;
+  config: TaskConfig;
+  definition: string | TaskDefinition;
+}
+
+interface IATasks {
+  list: Array<TaskModel>;
+}
+interface ITasks extends IATasks {
+  all(): Promise<TaskModel>;
+  get(name: string): Promise<TaskModel>;
+  getById?(id: string | number): Promise<TaskModel>;
+  save(activity: TaskModel): Promise<TaskModel>;
+  clear(): number;
+}
+```
+The TaskModel interface can be found in ```lib/codic/task/constructor```.
+
+
+#### Activities interface
+The activities interface is similar to the tasks and is as shown.
+```typescript
+
+interface ActivityModel {
+  driver?: any;
+  id?: string | number;
+  status: ActivityStatus;
+  nextRun: number;
+  lastRun?: number;
+  failedAt?: Date;
+  failReason?: string;
+  startedAt?: Date;
+  type: ActivityType;
+  _name?: string;
+  attrs: IActivityAttr;
+  taskNames: Array<string>;
+}
+
+interface IAActivities {
+  list: Array<ActivityModel>;
+}
+
+interface IActivities extends IAActivities {
+  all(): Promise<ActivityModel>;
+  get(name: string): Promise<ActivityModel>;
+  getById?(id: string | number): Promise<ActivityModel>;
+  save(activity: ActivityModel): Promise<ActivityModel>;
+  getActive(): Promise<Array<ActivityModel>>;
+  clear(): Promise<number>;
+  getDueList(): Promise<Array<ActivityModel>>;
+  getNextRunDelay(): Promise<number>;
+}
+```
+The TaskModel interface can be found in ```lib/codic/activity/constructor```.
+<br>
+<br>
+#### Note:
+* You can follow ```lib/memory``` as a sample implementation to create your driver.
+
+* Remember to manage copies of these interfaces in your local project instead of referencing in codic.
+
+* Namespaces shall be introduced to put things in perspective in future updates.
+
+* Creating and managing record ids is left to you the creator of the driver. Codic mostly works with names of tasks and activities though ids are used in some cases.
