@@ -102,19 +102,38 @@ function clear() {
     });
 }
 
-class Tasks$1 extends ATasks {
+class Tasks extends ATasks {
+    /**
+     * Fetch all tasks in storage
+     */
     all() {
         return all.apply(this);
     }
+    /**
+     * Get a single task by name
+     * @param name name of task
+     */
     get(name) {
         return get.apply(this, arguments);
     }
+    /**
+     * Get a single task by id
+     * @param id id of task
+     */
     getById(id) {
         return getById.apply(this, arguments);
     }
-    save(activity) {
+    /**
+     * Save a task to storage
+     * @param activity task model object
+     */
+    save(task) {
         return save.apply(this, arguments);
     }
+    /**
+     * Remove all tasks from storage
+     * Returns number of items removed
+     */
     clear() {
         return clear.apply(this);
     }
@@ -261,27 +280,56 @@ function getNextRunDelay() {
 }
 
 class Activities extends AActivities {
+    /**
+     * Get all active activities
+     */
     getActive() {
         return getActive.apply(this);
     }
+    /**
+     * Get all activities
+     */
     all() {
         return all$1.apply(this);
     }
+    /**
+     * Get a single activity by name
+     * @param name name of activity
+     */
     get(name) {
         return get$1.apply(this, arguments);
     }
+    /**
+     * Get a single activity by id
+     * @param id id of activity
+     */
     getById(id) {
         return getById$1.apply(this, arguments);
     }
+    /**
+     * Save activity to storage
+     * @param activity activity model object
+     */
     save(activity) {
         return save$1.apply(this, arguments);
     }
+    /**
+     * Remove all activities from storage
+     * Returns number of items removed
+     */
     clear() {
         return clear$1.apply(this);
     }
+    /**
+     * Get list of activities that are due for execution.
+     * Compares the nextRun with current time
+     */
     getDueList() {
         return getDueList.apply(this);
     }
+    /**
+     * Get the delay in miliseconds before next closest activity is due
+     */
     getNextRunDelay() {
         return getNextRunDelay.apply(this);
     }
@@ -294,7 +342,7 @@ class Activities extends AActivities {
 // Memory.prototype = prot;
 class Memory {
     constructor() {
-        this.tasks = new Tasks$1();
+        this.tasks = new Tasks();
         this.activities = new Activities();
     }
 }

@@ -30,6 +30,8 @@ bower_components
 # compiled typescript output
 compiled
 
+# vs code config
+.vscode
 # node-waf configuration
 .lock-wscript
 

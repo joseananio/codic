@@ -1,9 +1,9 @@
 var chaiAsPromised = require("chai-as-promised");
-import chai, { expect, assert } from "chai";
+import Task from "../../../lib/codic/task";
+import chai, { expect } from "chai";
 chai.use(chaiAsPromised);
 chai.should();
 
-import Task from "../../../lib/codic/task";
 const path = require("path");
 
 /////////////////////////

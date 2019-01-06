@@ -1,6 +1,6 @@
 {
   "name": "codic",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Easy dynamic nodejs, typescript job scheduler for any database",
   "author": {
     "name": "Joseph Anane",
@@ -29,7 +29,7 @@
     "build:cjs": "NODE_ENV=cjs rollup -c",
     "build:umd": "NODE_ENV=umd rollup -c",
     "build": "run-s clean && run-p build:cjs build:es",
-    "test": "NODE_ENV=test mocha --recursive -r ts-node/register test/**/*.test.ts"
+    "test": "NODE_ENV=test node_modules/.bin/mocha --recursive -r ts-node/register test/**/*.test.ts"
   },
   "dependencies": {
     "human-interval": "^0.1.6"
