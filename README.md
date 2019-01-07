@@ -1,8 +1,8 @@
 <div align="center">
   <br/>
   <h1>Codic</h1>
-  <p>Fast, extensible queue manager for Node<br/>
-    Typescript enabled scheduler with live update mechanism
+  <p>Fast, extensible queue manager for Node.<br/>
+    Typescript-enabled job scheduling with live update mechanism.
   </p>
   <br/>
 
@@ -29,12 +29,13 @@
   <p>
 </div>
 
-&nbsp;
----
+<br>
+
 Made to be lightweight and fully customizable. Plug a database driver, write tasks and run. Same operation for different databases.
 
+---
 
-### Features
+## Features
 
 - [x] Smallest and simplest codebase
 - [x] Support for any database or storage engine
@@ -59,14 +60,14 @@ Made to be lightweight and fully customizable. Plug a database driver, write tas
 - [ ] Concurrency management
 - ...and so much more
 <br/>
-Anyone can write a driver for any database or storage mechanism to work with Codic in managing schedules.
 
-By default we support in-memory storage. There is [codic-redis](http://github.com/joseananio/codic-redis) for redis too. Contributions are welcome. We will soon publish more details on how to contribute to codic itself.
 
-### Feature Comparison
+## Feature Comparison
 
 Since there are a few job queue solutions, here a table comparing them to help you use the one that
 better suits your needs.
+
+Codic is recommended for its database variety,  dynamic tasks support, and lightweight operations.
 
 | Feature         | Codic | Bull          | Kue   | Bee | Agenda
 | :-------------  |:-----:|:-------------:|:-----:|:---:|:------:|
@@ -82,11 +83,26 @@ better suits your needs.
 | Atomic ops      | ✓      | ✓             |       |  ✓  |        |
 | Persistence     | ✓      | ✓             |   ✓   |  ✓  |   ✓    |
 | UI              |       | ✓             |   ✓   |     |   ✓    |
-| Optimized for   | Jobs/Messages | Jobs / Messages | Jobs | Messages | Jobs |
+| Optimized for   | Jobs   | Jobs / Messages | Jobs | Messages | Jobs |
 
 Kudos for making the comparison chart goes to [Bull](https://www.npmjs.com/package/bull#feature-comparison) maintainers.
 
 The inspiration comes from [Agenda](https://github.com/agenda/agenda)
+
+<br/>
+
+---
+
+### Available Database Drivers
+
+Anyone can write a driver for any database or storage mechanism to work with Codic in managing schedules.
+
+By default we support in-memory storage. Contributions are welcome. We will soon publish more details on how to contribute to codic itself.
+
+| Driver         | Database          |
+|:--------------:|:-----------------:|
+| [codic-memory](http://github.com/joseananio/codic/tree/master/lib/memory) | Memory       |
+| [codic-redis](http://github.com/joseananio/codic-redis)  | Redis |
 
 <br/>
 
