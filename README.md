@@ -28,11 +28,10 @@
   </p>
   <p>
 </div>
-  <br/>
 
 &nbsp;
 ---
-Made to be lightweight and fully customizable
+Made to be lightweight and fully customizable. Plug a database driver, write tasks and go.
 
 
 ### Features
@@ -53,12 +52,13 @@ Made to be lightweight and fully customizable
 - [x] In-built memory storage
 
 #### Incoming:
-- Global operations
-- Event handling
-- Pause/resume—globally or locally.
-- Retries.
-- Concurrency management
-
+- [] Global operations
+- [] Event handling
+- [] Pause/resume—globally or locally.
+- [] Retries.
+- [] Concurrency management
+- ...and so much more
+<br/>
 Anyone can write a driver for any database or storage mechanism to work with Codic in managing schedules.
 
 By default we support in-memory storage. There is [codic-redis](http://github.com/joseananio/codic-redis) for redis too. Contributions are welcome. We will soon publish more details on how to contribute to codic itself.
@@ -84,6 +84,10 @@ better suits your needs.
 | UI              |       | ✓             |   ✓   |     |   ✓    |
 | Optimized for   | Jobs/Messages | Jobs / Messages | Jobs | Messages | Jobs |
 
+Kudos for making the comparison chart goes to [Bull](https://www.npmjs.com/package/bull#feature-comparison) maintainers.
+
+The inspiration comes from [Agenda](https://github.com/agenda/agenda)
+
 
 
 [Installation](#installation)  
@@ -95,7 +99,7 @@ better suits your needs.
 [Codic v2 Typescript](#codic-v2-typescript)  
 [Creating Drivers](#creating-drivers)
 
-### Installation
+## Installation
 ---
 
 ```
@@ -107,7 +111,7 @@ yarn add codic
 ```
 
 
-### Usage
+## Usage
 Codic is easy to implement. In your code, do the following:
 ```javascript
 import Codic from "codic";
@@ -145,7 +149,7 @@ const simpleLogTask = (activity) => {
 Thats it. You are live!!
 You can create many activities that run the same ```say hello``` task(function) or different tasks for the same activity.
 
-#### Usage with external driver
+### Usage with external driver
 Install a driver library of your choice.
 Currently [codic-redis](http://github.com/joseananio/codic-redis) is available. Anyone can write a driver and let us know to link it here.
 ```
@@ -169,22 +173,22 @@ var codic = new Codic(driver);
 // ... continue as above
 ```
 
-### Concept
+## Concept
 ----
 [Codic](https://github.com/joseananio/codic.git) uses Activities and Tasks to let you automate processes in your app.
 
-#### Tasks 
+### Tasks 
 A task is what you want to do at a particular time. It can be a simple function or a file exporting a function.
 
 An activity can contain a number of tasks that will be performed. Tasks will be ranked in terms of priority  
-#### Activities
+### Activities
 Activity specifies the time and how often one or more tasks are run. They can be executed repeatedly or once.
 
 So when a scheduled activity is executed, it will run one or more tasks before it ends. This is a bit different from existing schedulers that only let you create jobs and pass in functions.
 <br>
 <br>
 
-### More examples
+## More examples
 ---
 Assuming we have defined a task as follows:
 ```javascript
@@ -200,7 +204,7 @@ await codic.assign("send notifications",async function(activity){
     });
 })
 ```
-#### Running a one time task
+### Running a one time task
 ```javascript
 // pass isoString or human-interval or milliseconds to the at method
 await codic.run("send notifications")
@@ -212,13 +216,13 @@ await codic.start();
 
 ```
 
-#### Naming an activity
+### Naming an activity
 ```javascript
 await codic.setName("someName").save();
 
 ```
 
-#### Running with a delay
+### Running with a delay
 ```javascript
 // wait 5 minutes before executing activity
 await codic.run(["send notifications"])
@@ -228,7 +232,7 @@ await codic.run(["send notifications"])
 
 ```
 
-#### Simplified activity creation
+### Simplified activity creation
 You can pass the task list, repeat time and data to the ```.run``` method
 ```javascript
 await codic.run(
@@ -240,7 +244,7 @@ await codic.run(
 
 ```
 
-### Dynamic tasks
+## Dynamic tasks
 Dynamic tasks can be created and executed at any point in your execution cycle. You will then be able to pass different data to the task at any point in your code.
 
 To use dynamic tasks, define each task in a separate file and export it as default:
@@ -283,7 +287,7 @@ You can also create several activities that use the same task, during runtime.
 <br>
 <br>
 
-### Updating activities
+## Updating activities
 To update an activity, set a name for it during creation. You can then use the name to fetch, modify and then save the change.
 ```javascript
 await codic.run("send emails")
@@ -305,7 +309,7 @@ await annualMA.save();
 
 <br/>
 
-### Codic v2 Typescript
+## Codic v2 Typescript
 ---
 
 We have written codic to make it easy for anyone to use and build upon. Fully **Typescript**, in-built **memory driver**, and even more tests with **mocha**
@@ -320,11 +324,11 @@ We have included declarations for all methods and variables. More comments will 
 Right on the start, you get a default memory driver. That means codic can work standalone if you do not supply external driver. Memory driver means your schedules won't survive a service restart.
 For production use, do opt for an external persistent storage driver.
 
-### Creating drivers
+## Creating drivers
 ---
 Creating a codic storage driver is easy. Just implement the methods and properties on the driver interface and you are done.
 
-#### Driver structure
+### Driver structure
 The driver is just a plain object with two properties. Your driver instance should export an object as shown below.
 
 ```javascript
@@ -338,7 +342,7 @@ driver = {
 }
 ```
 
-#### Tasks interface
+### Tasks interface
 The ```driver.tasks``` object implements the ```ITasks``` interface which is as shown below. Your tasks object should export all the methods and return the data as specified. The implementation below is taken from the in-built memory driver which implements the same methods.
 
 ```typescript
@@ -368,7 +372,7 @@ ITasks and IATasks interfaces can be found in ```lib/memory/tasks/constructor.ts
 
 For JS developers, you only have to return an object similar to TaskModel when returning a task.
 
-#### Activities interface
+### Activities interface
 The activities interface is similar to the tasks and is as shown.
 ```typescript
 //storage object. mode of communication between codic and driver.activities
@@ -410,7 +414,7 @@ The ```ActivityModel```, ```IActivityAttr```, interface can be found in ```lib/c
 ActivityType and ActivityStatus can be found in ```lib/codic/activity/enums```.
 <br>
 <br>
-#### Note:
+### Notes:
 * You can follow ```lib/memory``` as a sample implementation to create your driver.
 
 * Remember to manage copies of these declarations in your local project instead of referencing in codic.
