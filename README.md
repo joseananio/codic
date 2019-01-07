@@ -89,6 +89,7 @@ Kudos for making the comparison chart goes to [Bull](https://www.npmjs.com/packa
 The inspiration comes from [Agenda](https://github.com/agenda/agenda)
 
 
+## Content
 
 [Installation](#installation)  
 [Usage](#usage)  
@@ -100,7 +101,6 @@ The inspiration comes from [Agenda](https://github.com/agenda/agenda)
 [Creating Drivers](#creating-drivers)
 
 ## Installation
----
 
 ```
 npm install --save codic
@@ -112,6 +112,7 @@ yarn add codic
 
 
 ## Usage
+
 Codic is easy to implement. In your code, do the following:
 ```javascript
 import Codic from "codic";
@@ -172,9 +173,9 @@ var codic = new Codic(driver);
 
 // ... continue as above
 ```
-
+<br/>
 ## Concept
-----
+
 [Codic](https://github.com/joseananio/codic.git) uses Activities and Tasks to let you automate processes in your app.
 
 ### Tasks 
@@ -189,7 +190,7 @@ So when a scheduled activity is executed, it will run one or more tasks before i
 <br>
 
 ## More examples
----
+
 Assuming we have defined a task as follows:
 ```javascript
 import mailer from "somepackage";
@@ -243,8 +244,9 @@ await codic.run(
       .save();
 
 ```
-
+<br/>
 ## Dynamic tasks
+
 Dynamic tasks can be created and executed at any point in your execution cycle. You will then be able to pass different data to the task at any point in your code.
 
 To use dynamic tasks, define each task in a separate file and export it as default:
@@ -287,7 +289,7 @@ You can also create several activities that use the same task, during runtime.
 <br>
 <br>
 
-## Updating activities
+### Updating activities
 To update an activity, set a name for it during creation. You can then use the name to fetch, modify and then save the change.
 ```javascript
 await codic.run("send emails")
@@ -310,7 +312,6 @@ await annualMA.save();
 <br/>
 
 ## Codic v2 Typescript
----
 
 We have written codic to make it easy for anyone to use and build upon. Fully **Typescript**, in-built **memory driver**, and even more tests with **mocha**
 
@@ -324,8 +325,9 @@ We have included declarations for all methods and variables. More comments will 
 Right on the start, you get a default memory driver. That means codic can work standalone if you do not supply external driver. Memory driver means your schedules won't survive a service restart.
 For production use, do opt for an external persistent storage driver.
 
+<br/>
 ## Creating drivers
----
+
 Creating a codic storage driver is easy. Just implement the methods and properties on the driver interface and you are done.
 
 ### Driver structure
