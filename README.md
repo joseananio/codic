@@ -5,7 +5,6 @@
     Typescript enabled scheduler with live update mechanism
   </p>
   <br/>
-</div>
 
 <p>
     <a href="https://gitter.im/joseananio/codic">
@@ -28,6 +27,7 @@
     </a>
   </p>
   <p>
+</div>
   <br/>
 
 &nbsp;
