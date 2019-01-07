@@ -88,17 +88,18 @@ Kudos for making the comparison chart goes to [Bull](https://www.npmjs.com/packa
 
 The inspiration comes from [Agenda](https://github.com/agenda/agenda)
 
+<br/>
 
 ## Content
 
-[Installation](#installation)  
-[Usage](#usage)  
-[Concept](#concept)  
-[More Examples](#more-examples)  
-[Dynamic Tasks](#dynamic-tasks)  
-[Updating activities](#updating-activities)  
-[Codic v2 Typescript](#codic-v2-typescript)  
-[Creating Drivers](#creating-drivers)
+- [Installation](#installation)  
+- [Usage](#usage)  
+- [Concept](#concept)  
+- [More Examples](#more-examples)  
+- [Dynamic Tasks](#dynamic-tasks)  
+- [Updating activities](#updating-activities)  
+- [Codic v2 Typescript](#codic-v2-typescript)  
+- [Creating Drivers](#creating-drivers)
 
 ## Installation
 
@@ -109,7 +110,7 @@ or
 ```
 yarn add codic
 ```
-
+<br/>
 
 ## Usage
 
@@ -174,6 +175,7 @@ var codic = new Codic(driver);
 // ... continue as above
 ```
 <br/>
+
 ## Concept
 
 [Codic](https://github.com/joseananio/codic.git) uses Activities and Tasks to let you automate processes in your app.
@@ -245,6 +247,7 @@ await codic.run(
 
 ```
 <br/>
+
 ## Dynamic tasks
 
 Dynamic tasks can be created and executed at any point in your execution cycle. You will then be able to pass different data to the task at any point in your code.
@@ -326,6 +329,7 @@ Right on the start, you get a default memory driver. That means codic can work s
 For production use, do opt for an external persistent storage driver.
 
 <br/>
+
 ## Creating drivers
 
 Creating a codic storage driver is easy. Just implement the methods and properties on the driver interface and you are done.
