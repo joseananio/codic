@@ -32,6 +32,8 @@ compiled
 
 # vs code config
 .vscode
+precommit.sh
+.coveralls.yml
 # node-waf configuration
 .lock-wscript
 

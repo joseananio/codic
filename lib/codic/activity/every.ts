@@ -13,7 +13,9 @@ export default function every(
 ): Activity {
   this.type = ActivityType.REPEAT;
   this.timesheet = generateTime(timesheet);
+  console.log(this.attrs);
   if (!this.nextRun) this.nextRun = Date.now() + this.timesheet;
+  if (this.attrs.skipInitial && !this.lastRun) this.skip();
   if (rest.length > 0) {
     let [data] = rest;
     return this.use(data);

@@ -5,8 +5,7 @@ interface saveFunc {
 }
 
 /**
- * Save activity into memory and driver
- * Tasks are saved automatically to driver always
+ * Save activity into memory
  * Updates if name exists
  * @param {ActivityModel} activity activity model object
  * @returns Promise<ActivityModel>
@@ -16,7 +15,7 @@ let save: saveFunc = async function(activity: ActivityModel) {
   var activities = this.list;
 
   activities.forEach(function(_activity: ActivityModel, key: number) {
-    if (_activity._name === activity._name) {
+    if (activity._name && _activity._name === activity._name) {
       activities[key] = activity;
       exists = true;
     }

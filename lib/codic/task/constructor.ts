@@ -5,7 +5,7 @@ export interface TaskConfig {
 }
 
 export interface TaskDefinition {
-  (): void;
+  (activity: any): void;
 }
 export interface TaskModel {
   name: string;
@@ -22,6 +22,9 @@ const defaultConfig: TaskConfig = {
 };
 
 function copyConfig(to: TaskConfig, from: TaskConfig = {}): TaskConfig {
+  if (typeof from !== "object") {
+    throw "Invalid config parameter. Requires an object";
+  }
   if (from.priority) to.priority = from.priority;
   return to;
 }
@@ -85,7 +88,6 @@ export abstract class ATask implements IATask {
 
   set definition(definition: string | TaskDefinition) {
     if (typeof definition !== "function" && typeof definition !== "string") {
-      console.log(definition, typeof definition);
       throw "Invalid Job definition. Requires a function or full path to function";
     }
     this._definition = definition;

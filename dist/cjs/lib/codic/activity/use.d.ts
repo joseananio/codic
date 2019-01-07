@@ -1,1 +1,1 @@
-export default function use(data: object): any;
+export default function use(data: any): any;

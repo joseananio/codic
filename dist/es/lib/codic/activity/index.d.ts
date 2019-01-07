@@ -1,8 +1,8 @@
 import { AActivity, IActivity, ActivityModel } from "./constructor";
-import { TaskModel } from "../task/constructor";
 interface IAActivity extends IActivity {
     every(timesheet: number | string, ...rest: any): Activity;
     startAt(dateTime: Date | string | number): Activity;
+    addTask(task: string | Array<string>): Activity;
     updateNextRun(from: number): Promise<any>;
     at(timesheet: number | string): Activity;
     startIn?(dateTime: string): Activity;
@@ -15,6 +15,7 @@ interface IAActivity extends IActivity {
     getTasks(): Promise<any>;
     isActive(): boolean;
     isDue(): boolean;
+    skip(): Activity;
 }
 declare class Activity extends AActivity implements IAActivity {
     /**
@@ -44,8 +45,9 @@ declare class Activity extends AActivity implements IAActivity {
     isDue(): boolean;
     getTasks(): Promise<any>;
     updateNextRun(from?: number): Promise<any>;
-    addTask(task: TaskModel): Activity;
+    addTask(task: string | Array<string>): Activity;
     failWtih(message: string, time?: number): Activity;
+    skip(): Activity;
     /**
      * Returns task formated as a driver object
      * @returns TaskModel

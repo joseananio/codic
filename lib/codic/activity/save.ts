@@ -16,6 +16,6 @@ export default async function save(): Promise<Activity> {
   let activity: ActivityModel = await this.driver.activities.save(
     this.toObject()
   );
-  this._copyConfig(activity);
+  this.config(activity);
   return this;
 }

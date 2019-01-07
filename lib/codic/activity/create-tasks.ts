@@ -5,7 +5,7 @@ export default function createTasks(
     taskNames = [taskNames];
 
   if (!Array.isArray(taskNames))
-    throw new Error("Tasks requires array or string");
+    throw new Error("Tasks should be array or string");
   if (taskNames.length == 0) throw new Error("No tasks defined for activity");
   return taskNames;
 }

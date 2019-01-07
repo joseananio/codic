@@ -10,7 +10,11 @@ import pause from "./pause"; //pause
 import runThrough from "./run-through";
 
 interface ICodic extends IACodic {
-  run(jobs: string | Array<string>, ...rest: any): Promise<Activity>;
+  run(
+    tasks: string | Array<string>,
+    timesheet?: number | string,
+    data?: any
+  ): Activity;
 
   assign(
     name: string | TaskModel,
@@ -30,9 +34,14 @@ class Codic extends ACodic implements ICodic {
    * Create a new activity. Activity requires a list of tasks,
    * time schedule and optional input data
    * @param tasks list of tasks (jobs) to run
-   * @param rest other parameter
+   * @param timesheet time to run task
+   * @param data data to pass to task
    */
-  run(tasks: string | Array<string>, ...rest: any): Promise<Activity> {
+  run(
+    tasks: string | Array<string>,
+    timesheet?: number | string,
+    data?: any
+  ): Activity {
     return run.apply(this, arguments);
   }
 

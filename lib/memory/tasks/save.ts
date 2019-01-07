@@ -5,8 +5,7 @@ interface saveFunc {
 }
 
 /**
- * Save task into memory and driver
- * Tasks are saved automatically to driver always
+ * Save task into memory
  * Updates if name exists
  * @param {TaskModel} task task model object
  * @returns Promise<TaskModel>

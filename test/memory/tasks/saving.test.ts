@@ -3,30 +3,16 @@ import chai, { expect } from "chai";
 chai.use(chaiAsPromised);
 chai.should();
 
-import MemoryDriver from "../../../lib/memory";
 import Task from "../../../lib/codic/task";
+import { driver, task1, task2 } from "../helper.test";
 
 //////////////////////////
-
-const driver = new MemoryDriver();
-
-const taskFn = function() {
-  console.log("Hello sailor...");
-};
-
-let task = new Task("a job", taskFn, { priority: 1 });
-
-//////////////////////////
-
-after("All savings", async () => {
-  driver.tasks.clear();
-});
 
 describe("Tasks", () => {
   describe("Creating new task", () => {
     it("should create new Task object", async () => {
-      const item = await driver.tasks.save(task);
-      expect(item).instanceof(Task);
+      const item = await driver.tasks.save(task1.toObject());
+      expect(new Task(item)).instanceof(Task);
     });
   });
 });

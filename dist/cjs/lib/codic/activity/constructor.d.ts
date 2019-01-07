@@ -60,7 +60,6 @@ export declare abstract class AActivity implements IActivity {
     _name: string;
     attrs: IActivityAttr;
     taskNames: Array<string>;
-    tasks?: Array<TaskModel>;
     /**
      * Create a new codic activity instance.
      * @param model ActivityModel object
@@ -73,7 +72,9 @@ export declare abstract class AActivity implements IActivity {
      * @param config ActivityConfig object
      */
     constructor(taskNames: string | Array<string>, config: IActivityConfig);
-    private _copyConfig;
+    config(from: IActivityAttr): any;
+    config(from: IActivityConfig): any;
+    config(from: ActivityModel): any;
     private _createTasks;
     private _createFromModel;
 }

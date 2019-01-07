@@ -1,2 +1,3 @@
 import Activity from "./activity";
-export default function (jobs: string | Array<string>, ...rest: any): Activity;
+declare function run(tasks: string | Array<string>, ...rest: any): Activity;
+export default run;

@@ -1,1 +1,1 @@
-export default function pause(activityName?: string): void;
+export default function pause(activityName?: string): Promise<void>;

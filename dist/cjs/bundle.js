@@ -46,19 +46,21 @@ class ATasks {
  */
 function get(name) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield this.list.find(task => task.name === name);
+        const task = this.list.find(task => task.name === name);
+        return task || null;
     });
 }
 /**
  * Get a single task by id
  * The task should have been saved in the driver first
  * Not yet available in memory
- * @param {string} name name of task
+ * @param {string} id id of task
  * @returns Promise<TaskModel>
  */
 function getById(id) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield this.list.find(task => task.id === id);
+        const task = this.list.find(task => task.id === id);
+        return task || null;
     });
 }
 
@@ -73,8 +75,7 @@ function all() {
 }
 
 /**
- * Save task into memory and driver
- * Tasks are saved automatically to driver always
+ * Save task into memory
  * Updates if name exists
  * @param {TaskModel} task task model object
  * @returns Promise<TaskModel>
@@ -171,7 +172,7 @@ function all$1() {
  */
 function get$1(name) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield this.list.find(activity => activity._name === name);
+        return (yield this.list.find(activity => activity._name === name)) || null;
     });
 }
 /**
@@ -183,13 +184,12 @@ function get$1(name) {
  */
 function getById$1(id) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield this.list.find(activity => activity.id === id);
+        return (yield this.list.find(activity => activity.id === id)) || null;
     });
 }
 
 /**
- * Save activity into memory and driver
- * Tasks are saved automatically to driver always
+ * Save activity into memory
  * Updates if name exists
  * @param {ActivityModel} activity activity model object
  * @returns Promise<ActivityModel>
@@ -199,7 +199,7 @@ let save$1 = function (activity) {
         var exists = false;
         var activities = this.list;
         activities.forEach(function (_activity, key) {
-            if (_activity._name === activity._name) {
+            if (activity._name && _activity._name === activity._name) {
                 activities[key] = activity;
                 exists = true;
             }
@@ -370,20 +370,6 @@ class ACodic {
  */
 function start () {
     return __awaiter(this, void 0, void 0, function* () {
-        // var r = await this.driver.activities.all();
-        //load tasks
-        // TODO: improve loading mechanism, activity.getTasks()
-        // let proms = await r.map(async activity => {
-        //   activity.taskNames.forEach(async function(taskName) {
-        //     let _task = await that.driver.tasks.get(taskName);
-        //     if (!_task) {
-        //       console.warn(taskName + " is not a valid task or does not exist");
-        //     } else {
-        //       activity.addTask(_task);
-        //     }
-        //   });
-        // });
-        // console.log(r);
         yield this._tryRun();
     });
 }
@@ -392,7 +378,7 @@ function createTasks(taskNames) {
     if (typeof taskNames === "string" && taskNames.length > 0)
         taskNames = [taskNames];
     if (!Array.isArray(taskNames))
-        throw new Error("Tasks requires array or string");
+        throw new Error("Tasks should be array or string");
     if (taskNames.length == 0)
         throw new Error("No tasks defined for activity");
     return taskNames;
@@ -424,7 +410,7 @@ class AActivity {
      * @param config Configuration parameters for activity
      */
     constructor(taskNames_model, config) {
-        this.timesheet = 1000;
+        this.timesheet = 60000;
         this.status = ActivityStatus.ACTIVE;
         this.nextRun = new Date().valueOf();
         this.lastRun = null;
@@ -435,22 +421,25 @@ class AActivity {
         this._name = null;
         this.attrs = defaultAttr;
         this.taskNames = new Array();
-        this.tasks = new Array();
         if (config)
-            this._copyConfig(config);
+            this.config(config);
         if (typeof taskNames_model == "string" || Array.isArray(taskNames_model))
             this._createTasks(taskNames_model);
         else
             this._createFromModel(taskNames_model);
     }
-    _copyConfig(from) {
-        return copyConfig(this, from);
+    config(from) {
+        copyConfig(this, from);
+        if (!this.lastRun && this.attrs.skipInitial)
+            // @ts-ignore
+            this.skip();
+        return this;
     }
     _createTasks(taskNames) {
         this.taskNames = createTasks(taskNames);
     }
     _createFromModel(model) {
-        this._copyConfig(model);
+        this.config(model);
         this._createTasks(model.taskNames);
     }
 }
@@ -532,13 +521,8 @@ function toObject() {
 }
 
 function addTask(task) {
-    if (!this.taskNames.includes(task.name)) {
-        this.taskNames.push(task.name);
-        this.tasks.push(task);
-    }
-    else {
-        this.tasks = this.tasks.map(t => (t.name === task.name ? task : t));
-    }
+    let taskNames = createTasks(task);
+    this.taskNames = Array.from(new Set([...this.taskNames, ...taskNames]));
     return this;
 }
 
@@ -583,8 +567,11 @@ function setName(name) {
 function every(timesheet, ...rest) {
     this.type = ActivityType.REPEAT;
     this.timesheet = generateTime(timesheet);
+    console.log(this.attrs);
     if (!this.nextRun)
         this.nextRun = Date.now() + this.timesheet;
+    if (this.attrs.skipInitial && !this.lastRun)
+        this.skip();
     if (rest.length > 0) {
         let [data] = rest;
         return this.use(data);
@@ -604,7 +591,7 @@ function save$2() {
             typeof this.driver.activities.save !== "function")
             throw "Driver does not implement Activities properly. save is undefined";
         let activity = yield this.driver.activities.save(this.toObject());
-        this._copyConfig(activity);
+        this.config(activity);
         return this;
     });
 }
@@ -682,6 +669,13 @@ class Activity extends AActivity {
     failWtih(message, time) {
         return failWith.apply(this, arguments);
     }
+    skip() {
+        let prevNext = this.nextRun;
+        this.nextRun += this.timesheet;
+        this.lastRun = prevNext;
+        console.log("skip", this.lastRun, this.attrs.skipInitial);
+        return this;
+    }
     /**
      * Returns task formated as a driver object
      * @returns TaskModel
@@ -691,8 +685,8 @@ class Activity extends AActivity {
     }
 }
 
-function run (jobs, ...rest) {
-    var activity = new Activity(jobs, { driver: this.driver });
+function run(tasks, ...rest) {
+    var activity = new Activity(tasks, { driver: this.driver });
     if (rest.length > 0) {
         let [timesheet, ...rrest] = rest;
         return activity.every(timesheet, ...rrest);
@@ -706,6 +700,9 @@ const defaultConfig = {
     status: 1
 };
 function copyConfig$1(to, from = {}) {
+    if (typeof from !== "object") {
+        throw "Invalid config parameter. Requires an object";
+    }
     if (from.priority)
         to.priority = from.priority;
     return to;
@@ -733,7 +730,6 @@ class ATask {
     /////////////////////
     set definition(definition) {
         if (typeof definition !== "function" && typeof definition !== "string") {
-            console.log(definition, typeof definition);
             throw "Invalid Job definition. Requires a function or full path to function";
         }
         this._definition = definition;
@@ -783,21 +779,17 @@ function assign(name, def, config) {
         if (typeof name !== "string") {
             throw "Invalid Task name. Requires a string";
         }
-        if (typeof def !== "function" && typeof def !== "string") {
-            throw "Invalid Job definition. Requires a function or full path to function";
-        }
-        if (config && typeof config !== "object") {
-            throw "Invalid config parameter. Requires an object";
-        }
         const task = new Task(name, def, config);
-        yield this.driver.tasks.save(task.toObject());
-        return task;
+        const _task = yield this.driver.tasks.save(task.toObject());
+        return new Task(_task);
     });
 }
 
 function pause(activityName) {
-    throw "Not implemented";
-    // console.log(this.driver);
+    return __awaiter(this, void 0, void 0, function* () {
+        throw new Error("Not implemented");
+        // console.log(this.driver);
+    });
 }
 
 function runThrough (cb) {
@@ -869,9 +861,10 @@ class Codic extends ACodic {
      * Create a new activity. Activity requires a list of tasks,
      * time schedule and optional input data
      * @param tasks list of tasks (jobs) to run
-     * @param rest other parameter
+     * @param timesheet time to run task
+     * @param data data to pass to task
      */
-    run(tasks, ...rest) {
+    run(tasks, timesheet, data) {
         return run.apply(this, arguments);
     }
     /**

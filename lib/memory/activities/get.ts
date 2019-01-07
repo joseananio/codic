@@ -6,7 +6,7 @@ import { ActivityModel } from "../../codic/activity/constructor";
  * @returns Promise<ActivityModel>
  */
 export async function get(name: string): Promise<ActivityModel> {
-  return await this.list.find(activity => activity._name === name);
+  return (await this.list.find(activity => activity._name === name)) || null;
 }
 
 /**
@@ -17,5 +17,5 @@ export async function get(name: string): Promise<ActivityModel> {
  * @returns Promise<ActivityModel>
  */
 export async function getById(id: string | number): Promise<ActivityModel> {
-  return await this.list.find(activity => activity.id === id);
+  return (await this.list.find(activity => activity.id === id)) || null;
 }

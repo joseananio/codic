@@ -3,7 +3,7 @@ import Activity from "./activity/index";
 import Task from "./task/index";
 import { TaskModel, TaskDefinition, TaskConfig } from "./task/constructor";
 interface ICodic extends IACodic {
-    run(jobs: string | Array<string>, ...rest: any): Promise<Activity>;
+    run(tasks: string | Array<string>, timesheet?: number | string, data?: any): Activity;
     assign(name: string | TaskModel, def: string | TaskDefinition, config?: TaskConfig): Promise<Task>;
     start(): Promise<void>;
     pause(): Promise<Codic>;
@@ -13,9 +13,10 @@ declare class Codic extends ACodic implements ICodic {
      * Create a new activity. Activity requires a list of tasks,
      * time schedule and optional input data
      * @param tasks list of tasks (jobs) to run
-     * @param rest other parameter
+     * @param timesheet time to run task
+     * @param data data to pass to task
      */
-    run(tasks: string | Array<string>, ...rest: any): Promise<Activity>;
+    run(tasks: string | Array<string>, timesheet?: number | string, data?: any): Activity;
     /**
      * Create a new task that will be executed by activities
      * @param name task name

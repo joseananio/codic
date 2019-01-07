@@ -1,27 +1,72 @@
 # codic
 
-Codic is a simple node based library. The goal is to allow creating job schedules that work with any database, through drivers.
+Automated processes (jobs) that work with any database, through drivers.
 
+<p>
+    <a href="https://gitter.im/joseananio/codic">
+      <img src="https://img.shields.io/npm/dm/codic.svg?maxAge=2592000"/>
+    </a>
+    <a href="http://travis-ci.org/joseananio/codic">
+      <img src="https://img.shields.io/travis/joseananio/codic/master.svg"/>
+    </a>
+    <a href="http://badge.fury.io/js/codic">
+      <img src="https://badge.fury.io/js/codic.svg"/>
+    </a>
+    <a href="https://coveralls.io/github/joseananio/codic?branch=master">
+      <img src="https://coveralls.io/repos/github/joseananio/codic/badge.svg?branch=master"/>
+    </a>
+    <a href="http://isitmaintained.com/project/joseananio/codic">
+      <img src="http://isitmaintained.com/badge/open/joseananio/codic.svg"/>
+    </a>
+    <a href="http://isitmaintained.com/project/joseananio/codic">
+      <img src="http://isitmaintained.com/badge/resolution/joseananio/codic.svg"/>
+    </a>
+  </p>
+  <p>
 Anyone can write a driver for any database or storage mechanism to work with Codic in managing schedules.
 
-Currently, we support redis and in-memory storage of schedules. Contributions are welcome. We will soon publish more details on how to contribute. Now, you can just contact me.
+By default we support in-memory storage. There is [codic-redis](http://github.com/joseananio/codic-redis) for redis too. Contributions are welcome. We will soon publish more details on how to contribute to codic itself.
+
+### Feature Comparison
+
+Since there are a few job queue solutions, here a table comparing them to help you use the one that
+better suits your needs.
+
+| Feature         | Codic | Bull          | Kue   | Bee | Agenda
+| :-------------  |:-----:|:-------------:|:-----:|:---:|:------:|
+| Backend         |any     | redis         | redis |redis| mongo  |
+| Priorities      | ✓      | ✓             |  ✓    |     |   ✓    |
+| Concurrency     |        | ✓             |  ✓    |  ✓  |   ✓    |
+| Delayed jobs    | ✓      | ✓             |  ✓    |     |   ✓    |
+| Global events   |        | ✓             |  ✓    |     |        |
+| Rate Limiter    |        | ✓             |       |     |        |
+| Pause/Resume    |        | ✓             |  ✓    |     |        |
+| Sandboxed worker|        | ✓             |       |     |        |
+| Repeatable jobs | ✓      | ✓             |       |     |   ✓    |
+| Atomic ops      | ✓      | ✓             |       |  ✓  |        |
+| Persistence     | ✓      | ✓             |   ✓   |  ✓  |   ✓    |
+| UI              |       | ✓             |   ✓   |     |   ✓    |
+| Optimized for   | Jobs/Messages | Jobs / Messages | Jobs | Messages | Jobs |
 
 #### Codic v2 is here
 ---
 
 We have rewritten codic to make it easy for anyone to use and build upon. Fully **Typescript**, **in-built memory driver**, and even more **tests** with **mocha** [Read more](#6-codic-v2)
 
-[1. Installation](#1-installation)  
-[2. Usage](#2-usage)  
-[3. Concept](#3-concept)  
-[4. More Examples](#4-more-examples)  
-[5. Dynamic Tasks](#5-dynamic-tasks)  
-[6. Codic v2](#6-codic-v2)  
-[7. Creating Drivers](#7-creating-drivers)
+**Note**: You don't have to know or use typescript to develop for codic or to use codic. It works same way with regular javascript.
 
-### 1. Installation
+[Installation](#1-installation)  
+[Usage](#2-usage)  
+[Concept](#3-concept)  
+[More Examples](#4-more-examples)  
+[Dynamic Tasks](#5-dynamic-tasks)  
+[Updating activities](#6-updating-activities)  
+[Codic v2](#7-codic-v2)  
+[Creating Drivers](#8-creating-drivers)
+
+### Installation
 ---
-We are still in beta mode so remember to check beta versions where available
+
 ```
 npm install --save codic
 ```
@@ -31,8 +76,8 @@ yarn add codic
 ```
 
 
-### 2. Usage
-In your code, do the following:
+### Usage
+Codic is easy to implement. In your code, do the following:
 ```javascript
 import Codic from "codic";
 
@@ -41,7 +86,7 @@ var codic = new Codic();
 
 // define your tasks
 const simpleLogTask = (activity) => {
-    console.log("Simply saying "+activity.attrs.data.message);
+    console.log("Simply saying "+activity.attrs.data.message); // data will be passed in 
 }
 // wrap in an IIFE, for async operation
 (async function(){
@@ -67,13 +112,15 @@ const simpleLogTask = (activity) => {
 })();
 ```
 Thats it. You are live!!
-You can create many activities that run the same ```say hello``` task(function)
+You can create many activities that run the same ```say hello``` task(function) or different tasks for the same activity.
 
-#### usage with external driver
+#### Usage with external driver
 Install a driver library of your choice.
 Currently [codic-redis](http://github.com/joseananio/codic-redis) is available. Anyone can write a driver and let us know to link it here.
-use codic version ```1.0.2``` for codic-redis. It is yet to be updated to codic v2
-
+```
+npm install --save codic-redis 
+```
+or
 ```
 yarn add codic-redis
 ```
@@ -91,27 +138,43 @@ var codic = new Codic(driver);
 // ... continue as above
 ```
 
-### 3. Concept
+### Concept
 ----
-Codic works on two main pillars:
-1. Activity
-2. Task
-#### Activities
-Activities as the name suggests, are the things you want to do at a particular time. Activities can be executed repeatedly or once.  
+[Codic](https://github.com/joseananio/codic.git) uses Activities and Tasks to let you automate processes in your app.
+
 #### Tasks 
+A task is what you want to do at a particular time. It can be a simple function or a file exporting a function.
+
 An activity can contain a number of tasks that will be performed. Tasks will be ranked in terms of priority  
+#### Activities
+Activity specifies the time and how often one or more tasks are run. They can be executed repeatedly or once.
 
 So when a scheduled activity is executed, it will run one or more tasks before it ends. This is a bit different from existing schedulers that only let you create jobs and pass in functions.
 <br>
 <br>
 
-### 4. More examples
+### More examples
 ---
+Assuming we have defined a task as follows:
+```javascript
+import mailer from "somepackage";
+import getUsersByGroupId from "somepackage2";
+
+await codic.assign("send notifications",async function(activity){
+    let groupId = activity.attrs.data.groupId;
+    let users = await getUsersByGroupId(groupId);
+    let message="Report to headquarters";
+    users.map(async user=>{
+        await mailer.send(user.email,message);
+    });
+})
+```
 #### Running a one time task
 ```javascript
-// pass isoString or human-interval or milliseconds to the at parameter
-await codic.run("say hello")
-           .at("2018-12-08T23:31:24.627Z") 
+// pass isoString or human-interval or milliseconds to the at method
+await codic.run("send notifications")
+            .use({groupId:1})
+           .at("2019-12-08T23:31:24.627Z") 
            .save();
 
 await codic.start();
@@ -126,7 +189,8 @@ await codic.setName("someName").save();
 
 #### Running with a delay
 ```javascript
-await codic.run(["taskname"])
+// wait 5 minutes before executing activity
+await codic.run(["send notifications"])
            .every("30 minutes")
            .startIn("5 minutes")
            .save();
@@ -134,45 +198,80 @@ await codic.run(["taskname"])
 ```
 
 #### Simplified activity creation
-You can pass the task list, repeat time and data to the run method
+You can pass the task list, repeat time and data to the ```.run``` method
 ```javascript
-await codic.run(["task1","task2"],"30 minutes",{name:"somedata"}).save();
+await codic.run(
+        ["send notifications","task2"], //tasks
+        "30 minutes", //time, every("30 minutes")
+        {groupId:2} //data, use({groupId:2})
+      )
+      .save();
 
 ```
 
-### 5. Dynamic tasks
-Dynamic tasks can be created and executed at any point in your execution cycle. You will then be able to pass different data to the task at any point of creation.
+### Dynamic tasks
+Dynamic tasks can be created and executed at any point in your execution cycle. You will then be able to pass different data to the task at any point in your code.
 
 To use dynamic tasks, define each task in a separate file and export it as default:
+lets say we have
+```
+src/
+    tasks/
+        email-sender-task.js
+    lib/
+        email-sender.js
+```
+Then, in email-sender-task.js,
 ```javascript
-// tasks/dynamic-task.js
+// tasks/email-sender-task.js
 
 // do your imports here if any
-function dynamicTask(activity){
+require const emailSender = "../lib/email-sender";
+
+function sendEmails(activity){
     // your content here
-    console.log("Hello sailor");
+    console.log("Sending emails");
+    emailSender.sendMassEmails();
 }
 
 module.exports=dynamicTask; //or
 export default dynamicTask;
 ```
-Register your task with codic, in your program:
+Register your task with codic, in your app:
 ```javascript
 const path = require("path");
 //define full path to task file
 let taskPath = path.join(process.cwd(),"./tasks/dynamic-task.js");
-//register
-await codic.define("dynamic-task",taskPath);
+//register full path
+await codic.define("send emails",taskPath);
 
 ```
 
-Now you can use the task in your activities. The task content can be modified in the ``dynamic-task.js`` file and codic will always read the latest changes.
+Now you can use the task in your activities. The task content can be modified in the ``email-sender-task.js`` file and codic will always read the latest changes.
 You can also create several activities that use the same task, during runtime.
 <br>
 <br>
 
+### Updating activities
+To update an activity, set a name for it during creation. You can then use the name to fetch, modify and then save the change.
+```javascript
+await codic.run("send emails")
+           .every("year")
+           .use({recipients:[
+               "joe@gmail.com","doe@yahoo.com"]
+            })
+           .setName("annualMailsActivity");
+```
 
-### 6. Codic v2
+then somewhere else in your app,
+```javascript
+let annualMA = await codic.activities.get("annualMailsActivity");
+//add another recipient
+let newRecipients=["joe@gmail.com","doe@yahoo.com","sam@live.com"];
+annualMA.use({recipients:newRecipients});
+await annualMA.save();
+```
+### Codic v2
 ---
 #### 1. Now with native support for Typescript. 
 We have rewritten the entire codic base in typescript. Now you can implement the driver interface and create your own storate driver without knowing the internals of codic. 
@@ -187,7 +286,7 @@ Codic now comes with mocha and chai testing setup. We have included more unit te
 <br>
 <br>
 
-### 7. Creating drivers
+### Creating drivers
 ---
 Creating a codic storage driver is easy. Just implement the methods and properties on the driver interface and you are done.
 

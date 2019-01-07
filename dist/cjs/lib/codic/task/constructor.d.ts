@@ -3,7 +3,7 @@ export interface TaskConfig {
     status?: number;
 }
 export interface TaskDefinition {
-    (): void;
+    (activity: any): void;
 }
 export interface TaskModel {
     name: string;

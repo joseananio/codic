@@ -21,6 +21,7 @@ import at from "./at";
 interface IAActivity extends IActivity {
   every(timesheet: number | string, ...rest: any): Activity;
   startAt(dateTime: Date | string | number): Activity;
+  addTask(task: string | Array<string>): Activity;
   updateNextRun(from: number): Promise<any>;
   at(timesheet: number | string): Activity;
   startIn?(dateTime: string): Activity;
@@ -33,6 +34,7 @@ interface IAActivity extends IActivity {
   getTasks(): Promise<any>;
   isActive(): boolean;
   isDue(): boolean;
+  skip(): Activity;
   // makeId(): Activity;
 }
 
@@ -106,12 +108,20 @@ class Activity extends AActivity implements IAActivity {
     return updateNextRun.apply(this, arguments);
   }
 
-  addTask(task: TaskModel): Activity {
+  addTask(task: string | Array<string>): Activity {
     return addTask.apply(this, arguments);
   }
 
   failWtih(message: string, time?: number): Activity {
     return failWtih.apply(this, arguments);
+  }
+
+  skip(): Activity {
+    let prevNext = this.nextRun;
+    this.nextRun += this.timesheet;
+    this.lastRun = prevNext;
+    console.log("skip", this.lastRun,this.attrs.skipInitial);
+    return this;
   }
 
   /**

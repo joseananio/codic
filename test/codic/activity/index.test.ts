@@ -39,7 +39,7 @@ describe("Codic.Activity", () => {
         failReason: "SDsd"
       });
       expect(activity.type).to.eq(ActivityType.TEMP);
-      expect(activity.timesheet).to.eq(1000);
+      expect(activity.timesheet).to.eq(60000);
       expect(activity.status).to.eq(ActivityStatus.ACTIVE);
       expect(activity.id).to.be.undefined;
       expect(activity.attrs.data).to.be.eq(data);
@@ -131,7 +131,8 @@ describe("Codic.Activity", () => {
       let now = new Date().valueOf();
       let config = {
         driver,
-        lastRun: now
+        lastRun: now,
+        attrs: { skipInitial: false }
       };
       const activity = new Activity("task 1", config);
       activity.every("5 minutes");

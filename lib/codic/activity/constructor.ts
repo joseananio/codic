@@ -78,7 +78,7 @@ let defaultAttr: IActivityAttr = {
 export abstract class AActivity implements IActivity {
   driver: any;
   readonly id?: string | number;
-  timesheet: number = 1000;
+  timesheet: number = 60000;
   status: ActivityStatus = ActivityStatus.ACTIVE;
   nextRun: number = new Date().valueOf();
   lastRun: number = null;
@@ -89,7 +89,7 @@ export abstract class AActivity implements IActivity {
   _name: string = null;
   attrs: IActivityAttr = defaultAttr;
   taskNames: Array<string> = new Array();
-  tasks?: Array<TaskModel> = new Array();
+  // tasks?: Array<TaskModel> = new Array();
 
   /**
    * Create a new codic activity instance.
@@ -114,13 +114,20 @@ export abstract class AActivity implements IActivity {
     taskNames_model: string | Array<string> | ActivityModel,
     config?: IActivityConfig
   ) {
-    if (config) this._copyConfig(config);
+    if (config) this.config(config);
     if (typeof taskNames_model == "string" || Array.isArray(taskNames_model))
       this._createTasks(taskNames_model);
     else this._createFromModel(taskNames_model);
   }
-  private _copyConfig(from) {
-    return copyConfig(this, from);
+  config(from: IActivityAttr);
+  config(from: IActivityConfig);
+  config(from: ActivityModel);
+  public config(from: any): AActivity {
+    copyConfig(this, from);
+    if (!this.lastRun && this.attrs.skipInitial)
+      // @ts-ignore
+      this.skip();
+    return this;
   }
 
   private _createTasks(taskNames: string | Array<string>): void {
@@ -128,7 +135,7 @@ export abstract class AActivity implements IActivity {
   }
 
   private _createFromModel(model: ActivityModel) {
-    this._copyConfig(model);
+    this.config(model);
     this._createTasks(model.taskNames);
   }
 }
