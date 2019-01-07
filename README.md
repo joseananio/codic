@@ -1,6 +1,6 @@
 <div align="center">
   <br/>
-  <h2>Codic</h2>
+  <h1>Codic</h1>
   <p>Fast, extensible queue manager for Node<br/>
     Typescript enabled scheduler with live update mechanism
   </p>
@@ -31,7 +31,7 @@
 
 &nbsp;
 ---
-Made to be lightweight and fully customizable. Plug a database driver, write tasks and go.
+Made to be lightweight and fully customizable. Plug a database driver, write tasks and run. Same operation for different databases.
 
 
 ### Features
@@ -52,11 +52,11 @@ Made to be lightweight and fully customizable. Plug a database driver, write tas
 - [x] In-built memory storage
 
 #### Incoming:
-- [] Global operations
-- [] Event handling
-- [] Pause/resume—globally or locally.
-- [] Retries.
-- [] Concurrency management
+- [ ] Global operations
+- [ ] Event handling
+- [ ] Pause/resume—globally or locally.
+- [ ] Retries.
+- [ ] Concurrency management
 - ...and so much more
 <br/>
 Anyone can write a driver for any database or storage mechanism to work with Codic in managing schedules.
