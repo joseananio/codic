@@ -1,6 +1,11 @@
-# codic
-
-Automated processes (jobs) that work with any database, through drivers.
+<div align="center">
+  <br/>
+  <h2>Codic</h2>
+  <p>Fast, extensible queue manager for Node<br/>
+    Typescript enabled scheduler with live update mechanism
+  </p>
+  <br/>
+</div>
 
 <p>
     <a href="https://gitter.im/joseananio/codic">
@@ -23,6 +28,37 @@ Automated processes (jobs) that work with any database, through drivers.
     </a>
   </p>
   <p>
+  <br/>
+
+&nbsp;
+---
+Made to be lightweight and fully customizable
+
+
+### Features
+
+- [x] Smallest and simplest codebase
+- [x] Support for any database or storage engine
+- [x] Typescript support
+- [x] Lightweight CPU operations.
+- [x] Drivers available for different databases
+- [x] Delayed activities(jobs).
+- [x] Schedule and repeat jobs according to a time specification.
+- [x] Easy time schedules with human-readable intervals
+- [x] Task Priority.
+- [x] Dynamic tasks on the go.
+- [x] Multiple tasks per activity.
+- [x] Automatic recovery from process crashes.
+- [x] Promise-based operations
+- [x] In-built memory storage
+
+#### Incoming:
+- Global operations
+- Event handling
+- Pause/resume—globally or locally.
+- Retries.
+- Concurrency management
+
 Anyone can write a driver for any database or storage mechanism to work with Codic in managing schedules.
 
 By default we support in-memory storage. There is [codic-redis](http://github.com/joseananio/codic-redis) for redis too. Contributions are welcome. We will soon publish more details on how to contribute to codic itself.
@@ -48,21 +84,16 @@ better suits your needs.
 | UI              |       | ✓             |   ✓   |     |   ✓    |
 | Optimized for   | Jobs/Messages | Jobs / Messages | Jobs | Messages | Jobs |
 
-#### Codic v2 is here
----
 
-We have rewritten codic to make it easy for anyone to use and build upon. Fully **Typescript**, **in-built memory driver**, and even more **tests** with **mocha** [Read more](#6-codic-v2)
 
-**Note**: You don't have to know or use typescript to develop for codic or to use codic. It works same way with regular javascript.
-
-[Installation](#1-installation)  
-[Usage](#2-usage)  
-[Concept](#3-concept)  
-[More Examples](#4-more-examples)  
-[Dynamic Tasks](#5-dynamic-tasks)  
-[Updating activities](#6-updating-activities)  
-[Codic v2](#7-codic-v2)  
-[Creating Drivers](#8-creating-drivers)
+[Installation](#installation)  
+[Usage](#usage)  
+[Concept](#concept)  
+[More Examples](#more-examples)  
+[Dynamic Tasks](#dynamic-tasks)  
+[Updating activities](#updating-activities)  
+[Codic v2 Typescript](#codic-v2-typescript)  
+[Creating Drivers](#creating-drivers)
 
 ### Installation
 ---
@@ -271,20 +302,23 @@ let newRecipients=["joe@gmail.com","doe@yahoo.com","sam@live.com"];
 annualMA.use({recipients:newRecipients});
 await annualMA.save();
 ```
-### Codic v2
+
+<br/>
+
+### Codic v2 Typescript
 ---
-#### 1. Now with native support for Typescript. 
-We have rewritten the entire codic base in typescript. Now you can implement the driver interface and create your own storate driver without knowing the internals of codic. 
-We have included declarations for all methods and variables. Comments will come soon, but everything is self-explanatory. More in this later
 
-#### 2. Now with in-built memory driver
-Right on the start, you get a default in-build memory driver. That means codic can work standalone if you do not supply external driver. Memory driver means your schedules won't survive a service restart.
+We have written codic to make it easy for anyone to use and build upon. Fully **Typescript**, in-built **memory driver**, and even more tests with **mocha**
+
+**Note**: You don't have to know or use typescript to develop with codic, or to use codic. It works same way with regular javascript.
+
+#### 1. Fully Typescript. 
+Codic is entirely written in typescript. This means you can implement the driver interface and create your own storage driver without knowing the internals of codic.
+We have included declarations for all methods and variables. More comments will come soon, but everything is mostly self-explanatory, we hope :).
+
+#### 2. In-built memory driver
+Right on the start, you get a default memory driver. That means codic can work standalone if you do not supply external driver. Memory driver means your schedules won't survive a service restart.
 For production use, do opt for an external persistent storage driver.
-
-#### 3. More test coverage
-Codic now comes with mocha and chai testing setup. We have included more unit tests to ensure everyting works as expected.
-<br>
-<br>
 
 ### Creating drivers
 ---
@@ -295,29 +329,32 @@ The driver is just a plain object with two properties. Your driver instance shou
 
 ```javascript
 driver = {
-    tasks:{
+    tasks:{ //Tasks
         //methods for handling tasks
     },
-    activities:{
+    activities:{ // Activities
         // methods for handling activities
     }
 }
 ```
 
 #### Tasks interface
-The tasks object implements the ITasks interface which is as shown below. Your tasks object should export all the methods and return the data as specified. The implementation below is taken from the in-built memory driver which implements the same methods.
+The ```driver.tasks``` object implements the ```ITasks``` interface which is as shown below. Your tasks object should export all the methods and return the data as specified. The implementation below is taken from the in-built memory driver which implements the same methods.
 
 ```typescript
+//storage object. mode of communication between codic and driver.tasks
 interface TaskModel {
   name: string;
   id?: string | number;
   config: TaskConfig;
   definition: string | TaskDefinition;
 }
-
+//custom interface for your driver,(optional)
+//just to separate in-house implementations from basic codic stuff
 interface IATasks {
   list?: Array<TaskModel>;
 }
+// driver.tasks interface
 interface ITasks extends IATasks {
   getById?(id: string | number): Promise<TaskModel>;
   save(activity: TaskModel): Promise<TaskModel>;
@@ -326,14 +363,15 @@ interface ITasks extends IATasks {
   clear(): number;
 }
 ```
-The TaskModel, TaskDefinition, TaskConfig interface can be found in ```lib/codic/task/constructor.ts```.
+The ```TaskModel```, ``TaskDefinition``, ```TaskConfig``` interface can be found in ```lib/codic/task/constructor.ts```.
 ITasks and IATasks interfaces can be found in ```lib/memory/tasks/constructor.ts```.
 
+For JS developers, you only have to return an object similar to TaskModel when returning a task.
 
 #### Activities interface
 The activities interface is similar to the tasks and is as shown.
 ```typescript
-
+//storage object. mode of communication between codic and driver.activities
 interface ActivityModel {
   driver?: any;
   id?: string | number;
@@ -349,11 +387,13 @@ interface ActivityModel {
   taskNames: Array<string>;
 }
 
+//custom stuff
 interface IAActivities {
   list?: Array<ActivityModel>;
 }
 
-interface IActivities extends IAActivities {
+//driver.activities interface
+interface `IActivities` extends `IAActivities` {
   getById?(id: string | number): Promise<ActivityModel>;
   save(activity: ActivityModel): Promise<ActivityModel>;
   getDueList(): Promise<Array<ActivityModel>>;
@@ -362,18 +402,22 @@ interface IActivities extends IAActivities {
   all(): Promise<Array<ActivityModel>>;
   getNextRunDelay(): Promise<number>;
   clear(): Promise<number>;
+  skip():Activity;
 }
 ```
-The ActivityModel, IActivityAttr, interface can be found in ```lib/codic/activity/constructor```.
-IActivities and IAActivities can be found in ```lib/memory/activities/constructor```.
+The ```ActivityModel```, ```IActivityAttr```, interface can be found in ```lib/codic/activity/constructor```.
+`IActivities` and `IAActivities` can be found in ```lib/memory/activities/constructor```.
 ActivityType and ActivityStatus can be found in ```lib/codic/activity/enums```.
 <br>
 <br>
 #### Note:
 * You can follow ```lib/memory``` as a sample implementation to create your driver.
 
-* Remember to manage copies of these interfaces in your local project instead of referencing in codic.
+* Remember to manage copies of these declarations in your local project instead of referencing in codic.
 
 * Namespaces shall be introduced to put things in perspective in future updates.
 
 * Creating and managing record ids is left to you the creator of the driver. Codic mostly works with names of tasks and activities though ids are used in some cases.
+
+* Javascript developers should return objects that implement TaskModel and ActivityModel, as single items or array.
+The other interfaces should serve only as reference to know which methods to implement
